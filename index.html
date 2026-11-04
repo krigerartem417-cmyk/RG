@@ -22,7 +22,7 @@ const TPL=[{"id": "know", "name": "А вы знали?", "w": 2036, "h": 2696, "
 window.onerror=(m)=>{document.getElementById('m').textContent='Ошибка: '+m};
 const c=document.getElementById('c'),x=c.getContext('2d');let cur=0;
 const ST=TPL.map(t=>({tx:t.texts.map(a=>({v:a.v,s:a.max||0})),sl:t.slots.map(()=>({img:null,z:1,px:0,py:0}))}));
-TPL.forEach(t=>{t._bg=new Image();t._bg.onload=draw;t._bg.onerror=()=>{document.getElementById('m').textContent='Не найден файл '+t.bg+' — загрузи картинки рядом с index.html'};t._bg.src=t.bg;if(t.fg){t._fg=new Image();t._fg.onload=draw;t._fg.src=t.fg}});
+TPL.forEach(t=>{t._bg=new Image();t._bg.onload=draw;t._bg.onerror=()=>{document.getElementById('m').textContent='Не найден файл '+t.bg+' — загрузи картинки рядом с index.html'};t._bg.src=t.bg;if(t.fg){t._fg=new Image();t._fg.onload=draw;t._fg.onerror=()=>{document.getElementById('m').textContent='Не найден файл '+t.fg+' — проверь имя в репозитории'};t._fg.src=t.fg}});
 function fit(t,v,s0,W,H,lh){let L,sz=s0;for(;sz>20;sz-=2){x.font=t.font.replace('@',sz+'px');L=[];
  for(const p of v.split('\n')){let l='';for(const w of p.split(/\s+/).filter(Boolean)){const n=l?l+' '+w:w;if(x.measureText(n).width>W&&l){L.push(l);l=w}else l=n}L.push(l)}
  if(L.length*sz*lh<=H&&L.every(l=>x.measureText(l).width<=W))break}return[L,sz]}
@@ -36,7 +36,7 @@ function slot(s,o){x.save();let TL,TR,BL;if(s.r){TL=[s.r[0],s.r[1]];TR=[s.r[0]+s
 function draw(){const t=TPL[cur],S=ST[cur];if(!t._bg.complete||!t._bg.naturalWidth)return;
  c.width=t.w;c.height=t.h;x.drawImage(t._bg,0,0);
  t.slots.forEach((s,i)=>{if(S.sl[i].img)slot(s,S.sl[i])});
- if(t._fg&&t._fg.complete)x.drawImage(t._fg,0,0);
+ if(t._fg&&t._fg.naturalWidth)x.drawImage(t._fg,0,0);
  t.texts.forEach((t2,i)=>{const v=S.tx[i].v.trim();if(!v)return;x.save();x.fillStyle=t2.color;
   if(t2.type=='box'){const[L,sz]=fit(t2,v,S.tx[i].s,t2.W,t2.H,t2.lh);x.textAlign='center';x.textBaseline='middle';const lh=sz*t2.lh,y0=t2.Y-(L.length-1)*lh/2;L.forEach((l,j)=>x.fillText(l,t2.X,y0+j*lh))}
   else{let sz=t2.size;for(;sz>20;sz-=2){x.font=t2.font.replace('@',sz+'px');if(x.measureText(v).width<=t2.maxW)break}
