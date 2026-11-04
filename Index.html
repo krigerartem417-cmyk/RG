@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Афиши Black Russia</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Onest:wght@500;800&display=swap">
+<style>
+:root{--bg:#f3f0f7;--card:#fff;--ink:#241a33;--muted:#6b5f80;--line:#cfc4e0;--acc:#8a3fd1;--acc-ink:#fff;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150f1f;--card:#211733;--ink:#f1ebfa;--muted:#aa9cc4;--line:#3d2d59;--acc:#a869f0;--acc-ink:#14091f}}
+:root[data-theme="dark"]{--bg:#150f1f;--card:#211733;--ink:#f1ebfa;--muted:#aa9cc4;--line:#3d2d59;--acc:#a869f0;--acc-ink:#14091f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Onest,system-ui,sans-serif}
+main{max-width:780px;margin:0 auto;padding:20px 16px 60px}
+h1{font:700 28px/1.15 Oswald,Impact,sans-serif;margin:0 0 6px}
+h2{font:700 20px Oswald,sans-serif;margin:26px 0 10px}
+p{margin:0 0 12px;color:var(--muted)}
+canvas{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:#222}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;text-align:left;padding:0;color:var(--ink);font:inherit}
+.card img,.card .ph{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#2a1f3a}
+.card span{display:block;padding:10px 12px;font-weight:500}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 16px 18px;margin-top:16px}
+label{display:block;margin:14px 0 6px;font-weight:500}
+input[type=text],textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 13px;min-height:46px}
+input[type=color]{width:56px;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:3px}
+input[type=range]{width:100%;accent-color:var(--acc)}
+input[type=file]{width:100%;font:inherit;color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+button.b{font:500 15px Onest,sans-serif;border:0;border-radius:10px;padding:12px 18px;min-height:46px;cursor:pointer;background:var(--acc);color:var(--acc-ink)}
+button.g{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button.d{background:transparent;color:#c62828;border:1px solid var(--line)}
+:is(button,input,textarea,select):focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.layer{border:1px solid var(--line);border-radius:12px;padding:4px 14px 14px;margin-top:12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.msg{min-height:22px;font-size:14px;color:var(--muted);margin-top:8px}
+#fallback{display:none;margin-top:14px}#fallback img{width:100%;border-radius:12px}
+.back{background:none;border:0;color:var(--muted);font:inherit;cursor:pointer;padding:0 0 12px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+(function(){
+var app=document.getElementById('app'),ctx,TPL=[],BG={},repaint=function(){};
+function h(tag,a,kids){var e=document.createElement(tag);
+  for(var k in (a||{})){var v=a[k];if(v==null)continue;if(k==='on'){for(var ev in v)e.addEventListener(ev,v[ev])}else if(k==='text')e.textContent=v;else e.setAttribute(k,v)}
+  (kids||[]).forEach(function(c){if(c!=null)e.appendChild(typeof c==='string'?document.createTextNode(c):c)});return e}
+function mix(hex,f){var n=parseInt(hex.slice(1),16);return 'rgb('+Math.round((n>>16&255)*f)+','+Math.round((n>>8&255)*f)+','+Math.round((n&255)*f)+')'}
+function rr(x,y,w,hh,r){ctx.beginPath();ctx.roundRect(x,y,w,hh,r)}
+function wrap(text,maxW){var ws=text.split(/\s+/).filter(Boolean),L=[],cur='';
+  ws.forEach(function(w){var t=cur?cur+' '+w:w;if(ctx.measureText(t).width>maxW&&cur){L.push(cur);cur=w}else cur=t});if(cur)L.push(cur);return L}
+function fitText(text,font,cx,cy,maxW,maxH,start,min,lh,color,al){
+  var s=start,L=[];for(;s>=min;s-=2){ctx.font=font.replace('{s}',s);L=wrap(text,maxW);
+    if(L.length*s*lh<=maxH&&L.every(function(l){return ctx.measureText(l).width<=maxW}))break}
+  ctx.fillStyle=color;ctx.textAlign=al||'center';ctx.textBaseline='middle';
+  var y0=cy-(L.length-1)*s*lh/2;L.forEach(function(l,i){ctx.fillText(l,cx,y0+i*s*lh)})}
+function cover(img,x,y,w,hh){var r=Math.max(w/img.width,hh/img.height),iw=img.width*r,ih=img.height*r;
+  ctx.save();ctx.beginPath();ctx.rect(x,y,w,hh);ctx.clip();ctx.drawImage(img,x+(w-iw)/2,y+(hh-ih)/2,iw,ih);ctx.restore()}
+
+function readImg(file,ok,fail){var r=new FileReader();r.onerror=function(){if(fail)fail()};r.onload=function(){var i=new Image();i.onload=function(){ok(i)};i.onerror=function(){if(fail)fail()};i.src=r.result};r.readAsDataURL(file)}
+/* ---------- встроенный шаблон: викторина ---------- */
+function plus(x,y,k,blur){ctx.save();ctx.translate(x,y);ctx.scale(k,k);if(blur)ctx.filter='blur('+blur+'px)';
+  var g=ctx.createLinearGradient(-60,-60,60,60);g.addColorStop(0,'#c9a3ff');g.addColorStop(1,'#7c4fe0');ctx.fillStyle=g;
+  [[0,-48],[0,48],[-48,0],[48,0]].forEach(function(p){ctx.save();ctx.translate(p[0],p[1]);if(p[0])ctx.rotate(Math.PI/2);rr(-22,-46,44,92,22);ctx.fill();ctx.restore()});ctx.restore()}
+function quiz(v,im){var W=1781,H=1057,c1=v.c1,c2=v.c2,F='{s}px Oswald, Impact, sans-serif';
+  if(im.bg)cover(im.bg,0,0,W,H);else{
+    var g=ctx.createLinearGradient(0,H,W,0);g.addColorStop(0,'#3d1a4a');g.addColorStop(.55,'#241d2b');g.addColorStop(1,'#1c191f');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(190,70,230,.55)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(250,380);ctx.bezierCurveTo(900,150,1200,300,W,420);ctx.stroke();
+    plus(1330,70,1.1,0);plus(385,272,.4,0);plus(1650,590,1.15,3);plus(710,560,.7,0);plus(130,610,1.1,6)}
+  g=ctx.createLinearGradient(30,0,1030,0);g.addColorStop(0,c1);g.addColorStop(1,mix(c1,.35));ctx.fillStyle=g;rr(30,20,1000,200,[100,36,36,100]);ctx.fill();
+  fitText(v.title.toUpperCase(),'500 '+F,530,120,900,175,118,36,1.04,'#fff');
+  fitText(v.plabel.toUpperCase(),'500 '+F,400,430,640,250,98,32,1.06,'#fff');
+  fitText(v.prize.toUpperCase(),'500 '+F,400,600,640,110,96,30,1.05,'#fff');
+  ctx.save();ctx.translate(1245,585);ctx.rotate(.13);ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=40;ctx.shadowOffsetY=14;
+  ctx.fillStyle=c2;rr(-395,-440,790,880,44);ctx.fill();ctx.shadowColor='transparent';
+  ctx.fillStyle=mix(c2,.55);rr(-345,-330,690,185,30);ctx.fill();ctx.fillStyle='#f3eedb';rr(-370,-115,740,500,40);ctx.fill();
+  [-255,-85,85,255].forEach(function(x){ctx.fillStyle='rgba(0,0,0,.45)';ctx.beginPath();ctx.ellipse(x,-440,36,46,0,0,7);ctx.fill();
+    ctx.strokeStyle='#747160';ctx.lineWidth=26;ctx.lineCap='round';ctx.beginPath();ctx.arc(x,-440,52,Math.PI*.9,Math.PI*2.1);ctx.stroke()});
+  fitText(v.qn.toUpperCase(),'500 '+F,0,-237,640,150,112,40,1.05,'#fff');
+  fitText(v.q.toUpperCase(),'300 '+F,0,135,660,420,100,30,1.1,'#9a9a9a');ctx.restore();
+  ctx.font='800 46px Onest, Arial Black, sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle='#fff';ctx.fillText('BLACK RUSSIA',735,1008);
+  g=ctx.createLinearGradient(1120,0,1360,0);g.addColorStop(0,c1);g.addColorStop(1,mix(c1,.5));ctx.fillStyle=g;rr(1120,970,240,72,36);ctx.fill();
+  ctx.save();ctx.transform(1,0,-.18,1,0,0);fitText(v.srv.toUpperCase(),'800 {s}px Onest, Arial Black, sans-serif',1240+.18*1006,1006,180,56,44,18,1,'#fff');ctx.restore()}
+var QUIZ={id:'_quiz',name:'Викторина на знание сервера',builtin:true,w:1781,h:1057,fields:[
+  {k:'title',t:'text',label:'Заголовок',def:'Викторина на знание своего сервера!'},{k:'plabel',t:'text',label:'Подпись приза',def:'Приз за правильный ответ:'},
+  {k:'prize',t:'text',label:'Приз',def:'50 000 ИВ'},{k:'qn',t:'text',label:'Заголовок блокнота',def:'Третий вопрос'},
+  {k:'q',t:'area',label:'Вопрос',def:'Количество действующей администрации?'},{k:'srv',t:'text',label:'Сервер',def:'Surgut'},
+  {k:'c1',t:'color',label:'Цвет плашек',def:'#a14fb5'},{k:'c2',t:'color',label:'Цвет блокнота',def:'#d28b5e'},{k:'bg',t:'image',label:'Свой фон (по желанию)'}]};
+
+/* ---------- встроенный шаблон: битва скинов ---------- */
+function skins(v,im){var W=1920,H=1084,ac=v.c1;
+  ctx.fillStyle='#3a3335';ctx.fillRect(0,0,W,H);
+  var rg=ctx.createRadialGradient(960,620,40,960,620,900);rg.addColorStop(0,'rgba(120,30,36,.7)');rg.addColorStop(1,'rgba(120,30,36,0)');ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(225,30,30,.8)';ctx.lineWidth=2.5;
+  [[0,400,150,390,350,250],[690,470,800,420,1250,450],[700,740,740,1000,820,1084],[1040,1084,1040,900,1100,810],[1500,905,1650,960,1720,1084],[850,210,1000,260,1350,235]].forEach(function(c){
+    ctx.beginPath();ctx.moveTo(c[0],c[1]);ctx.bezierCurveTo(c[2],c[3],c[4],c[5],c[0]+(c[4]-c[0])*1.4,c[5]+60);ctx.stroke()});
+  var F='italic 800 {s}px Onest, Arial Black, sans-serif';
+  fitText((v.vs||'').toUpperCase(),F,1005,545,520,300,340,80,1,'rgba(205,50,55,.85)');
+  fitText(v.title.toUpperCase(),F,1000+12,130+10,1130,170,175,40,1,mix(ac,.7));
+  fitText(v.title.toUpperCase(),F,1000,130,1130,170,175,40,1,ac);
+  [[188,'img1','Первая картинка'],[1266,'img2','Вторая картинка']].forEach(function(f){var x=f[0],y=247,w=498,hh=664;
+    ctx.save();rr(x,y,w,hh,16);ctx.clip();
+    if(im[f[1]])cover(im[f[1]],x,y,w,hh);else{var g=ctx.createLinearGradient(x,y,x,y+hh);g.addColorStop(0,'#8a7a5a');g.addColorStop(1,'#5b4c36');ctx.fillStyle=g;ctx.fillRect(x,y,w,hh);
+      fitText(f[2],'500 {s}px Onest, sans-serif',x+w/2,y+hh/2,w-60,100,44,20,1.1,'rgba(255,255,255,.75)')}
+    ctx.restore();ctx.strokeStyle=ac;ctx.lineWidth=3;rr(x,y,w,hh,16);ctx.stroke()});
+  ctx.font='800 52px Onest, Arial Black, sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle='#fff';ctx.fillText('BLACK RUSSIA',775,1055);
+  ctx.fillStyle='rgba(30,20,22,.55)';rr(1752,1027,153,48,24);ctx.fill();ctx.strokeStyle=ac;ctx.lineWidth=3;ctx.stroke();
+  fitText(v.srv.toUpperCase(),'italic 800 {s}px Onest, Arial Black, sans-serif',1828,1052,120,36,36,16,1,'#fff')}
+var SKINS={id:'_skins',name:'Битва скинов',builtin:true,w:1920,h:1084,draw:skins,fields:[
+  {k:'title',t:'text',label:'Заголовок',def:'Битва скинов'},{k:'vs',t:'text',label:'Надпись в центре',def:'VS'},
+  {k:'srv',t:'text',label:'Сервер',def:'Surgut'},{k:'c1',t:'color',label:'Основной цвет',def:'#ff3b3f'},
+  {k:'img1',t:'image',label:'Первая картинка'},{k:'img2',t:'image',label:'Вторая картинка'}]};
+QUIZ.draw=quiz;
+
+/* ---------- шаблоны из базы ---------- */
+function fieldsOf(t){return t.layers.map(function(l){return l.t==='text'?{k:l.k,t:'text',label:l.label,def:l.def}:{k:l.k,t:'image',label:l.label}})}
+function bgOf(t){if(!BG[t.id]){var i=new Image();i.onload=function(){repaint()};i.src=t.bg;BG[t.id]=i}return BG[t.id]}
+function drawTpl(cv,t,v,im){ctx=cv.getContext('2d');cv.width=t.w;cv.height=t.h;ctx.clearRect(0,0,t.w,t.h);
+  if(t.builtin){t.draw(v,im);return}
+  var b=bgOf(t);if(b.complete&&b.naturalWidth)ctx.drawImage(b,0,0,t.w,t.h);else{ctx.fillStyle='#333';ctx.fillRect(0,0,t.w,t.h)}
+  t.layers.forEach(function(l){var x=l.x*t.w,y=l.y*t.h,w=l.w*t.w,hh=l.h*t.h;
+    if(l.t==='text'){var tx=v[l.k]!=null?v[l.k]:l.def;if(l.up)tx=tx.toUpperCase();
+      var cx=l.al==='left'?x:l.al==='right'?x+w:x+w/2;
+      fitText(tx,l.wt+' {s}px '+l.font+', sans-serif',cx,y+hh/2,w,hh,Math.round(hh),12,1.05,l.color,l.al)}
+    else if(im[l.k])cover(im[l.k],x,y,w,hh)})}
+
+/* ---------- экраны ---------- */
+function home(){
+  var items=[QUIZ,SKINS].concat(TPL);
+  app.replaceChildren(h('h1',{text:'Афиши Black Russia'}),h('p',{text:'Выберите шаблон, поменяйте текст или картинку и скачайте готовую афишу.'}),
+    h('div',{class:'grid'},items.map(function(t){return h('button',{class:'card',on:{click:function(){use(t)}}},[t.bg?h('img',{src:t.bg,alt:''}):h('div',{class:'ph'}),h('span',{text:t.name})])})),
+    h('p',{style:'margin-top:20px;font-size:14px',text:'Всё работает без регистрации, картинки не загружаются на сервер.'}))}
+
+function use(t){
+  var v={},im={},fields=t.fields||fieldsOf(t),cv=h('canvas',{'aria-label':'Предпросмотр'}),msg=h('div',{class:'msg',role:'status'}),fb=h('div',{id:'fallback'},[h('p',{text:'Нажмите на картинку и удерживайте, чтобы сохранить её.'}),h('img',{alt:'Готовая афиша'})]);
+  repaint=function(){drawTpl(cv,t,v,im)};
+  var form=h('div',{class:'panel'});
+  fields.forEach(function(f){var inp;v[f.k]=f.def;
+    if(f.t==='image'){inp=h('input',{type:'file',accept:'image/*',id:'f_'+f.k});inp.addEventListener('change',function(){var file=inp.files&&inp.files[0];if(!file){im[f.k]=null;repaint();return}
+      readImg(file,function(i){im[f.k]=i;repaint();msg.textContent='Картинка загружена.'},function(){msg.textContent='Не удалось прочитать файл. Попробуйте JPG или PNG.'})})}
+    else{inp=h(f.t==='area'?'textarea':'input',{id:'f_'+f.k,type:f.t==='color'?'color':'text',rows:f.t==='area'?'3':null,maxlength:'300'});inp.value=f.def;
+      inp.addEventListener('input',function(){v[f.k]=inp.value;repaint()})}
+    form.appendChild(h('label',{for:'f_'+f.k,text:f.label}));form.appendChild(inp)});
+  var dl=h('button',{class:'b',text:'Скачать PNG',on:{click:function(){
+    cv.toBlob(function(b){fb.querySelector('img').src=cv.toDataURL('image/png');fb.style.display='block';
+      if(!b){msg.textContent='Сохраните картинку ниже долгим нажатием.';return}
+      var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='afisha.png';document.body.appendChild(a);a.click();a.remove();
+      setTimeout(function(){URL.revokeObjectURL(u)},4000);msg.textContent='Если файл не сохранился, сохраните картинку ниже долгим нажатием.'},'image/png')}}});
+  app.replaceChildren(h('button',{class:'back',text:'← Все шаблоны',on:{click:home}}),h('h1',{text:t.name}),cv,h('div',{class:'row'},[dl]),msg,fb,form);
+  repaint();[1,2,3].forEach(function(n){setTimeout(repaint,n*600)})}
+
+/* ---------- запуск ---------- */
+home();
+if(document.fonts&&document.fonts.load)Promise.all(['300 40px Oswald','500 40px Oswald','700 40px Oswald','500 40px Onest','800 40px Onest'].map(function(f){return document.fonts.load(f,'Аб')})).then(function(){repaint()}).catch(function(){});
+})();
+</script>
+</body>
+</html>
