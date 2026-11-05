@@ -1,4 +1,4 @@
-l<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
@@ -427,20 +427,29 @@ function placeholder(l,w,h){ctx.fillStyle=lin(0,-h/2,0,h/2,[[0,'#8a7a5a'],[1,'#5
     ctx.fillStyle='#aab';ctx.fillText('Темы 4,6K   Сообщения 13,9K',-w/2+160,-h/2+214)}
   else{var lb=(l.label||'Фото').toUpperCase(),fz=Math.round(Math.min(w,h)*.12);ctx.fillStyle='rgba(255,255,255,.8)';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='500 '+fz+'px Onest, Arial, sans-serif';while(ctx.measureText(lb).width>w*.8&&fz>14){fz-=2;ctx.font='500 '+fz+'px Onest, Arial, sans-serif'}ctx.fillText(lb,0,0)}}
 function cover(img,x,y,w,hh){var r=Math.max(w/img.width,hh/img.height),iw=img.width*r,ih=img.height*r;ctx.drawImage(img,x+(w-iw)/2,y+(hh-ih)/2,iw,ih)}
+
+/* ОБЁРТКА ДЛЯ СЛОЯ ШАБЛОНА (нужна для сортировки по z) */
+function drawLayer(l,st){ctx.save();ctx.translate(l.x+l.w/2,l.y+l.h/2);if(l.rot)ctx.rotate(l.rot*Math.PI/180);var w=l.w,h=l.h;
+  if(l.t==='img'){var i=st.im[l.k];
+    if(l.fr){ctx.shadowColor='rgba(0,0,0,.3)';ctx.shadowBlur=10}
+    ctx.save();rr(-w/2,-h/2,w,h,l.r||0);ctx.clip();if(i)cover(i,-w/2,-h/2,w,h);else placeholder(l,w,h);ctx.restore()}
+  else{var tx=st.val[l.k]!=null?st.val[l.k]:l.def;if(l.up)tx=tx.toUpperCase();var fam=st.fnt[l.k]||l.font,sc=(st.sz[l.k]||100)/100,pd=l.pad||0,mw=w-2*pd,mh=h-2*pd;if(l.fill){ctx.save();ctx.shadowColor='rgba(0,0,0,.28)';ctx.shadowBlur=10;ctx.fillStyle=l.fill;ctx.fillRect(-w/2,-h/2,w,h);ctx.restore()}
+    var s=autoSize(l,fam,tx.replace(/\[\[|\]\]/g,''),mw,mh),s2=Math.max(8,Math.round(s*sc)),lh=l.lh||1.05;ctx.font=fontStr(l,fam,s2);
+    var cx=l.al==='left'?-w/2:l.al==='right'?w/2:0;ctx.textBaseline='middle';
+    if(l.rich){var parts=tx.split(/(\[\[.*?\]\])/).filter(Boolean).map(function(p){var m=/^\[\[(.*)\]\]$/.exec(p);return{t:m?m[1]:p,c:m?l.rich:l.color}});
+      var tot=parts.reduce(function(a,p){return a+ctx.measureText(p.t).width},0),x=l.al==='left'?cx:l.al==='right'?cx-tot:cx-tot/2;ctx.textAlign='left';parts.forEach(function(p){ctx.fillStyle=p.c;ctx.fillText(p.t,x,0);x+=ctx.measureText(p.t).width})}
+    else{tx=tx.replace(/\[\[|\]\]/g,'');var L=wrapT(tx,mw*(sc>1?1:1)),y0=-(L.length-1)*s2*lh/2;ctx.textAlign=l.al||'center';
+      if(l.sh){ctx.fillStyle=l.sh[2];L.forEach(function(q,i){ctx.fillText(q,cx+l.sh[0],y0+i*s2*lh+l.sh[1])})}
+      ctx.fillStyle=l.color;L.forEach(function(q,i){ctx.fillText(q,cx,y0+i*s2*lh)})}}
+  ctx.restore()}
+
 function draw(cv,v,st){ctx=cv.getContext('2d');cv.width=v.w;cv.height=v.h;ctx.clearRect(0,0,v.w,v.h);v.paint();if(v.arcs!==false)arcs(v);
-  v.layers.forEach(function(l){ctx.save();ctx.translate(l.x+l.w/2,l.y+l.h/2);if(l.rot)ctx.rotate(l.rot*Math.PI/180);var w=l.w,h=l.h;
-    if(l.t==='img'){var i=st.im[l.k];
-      if(l.fr){ctx.shadowColor='rgba(0,0,0,.3)';ctx.shadowBlur=10}
-      ctx.save();rr(-w/2,-h/2,w,h,l.r||0);ctx.clip();if(i)cover(i,-w/2,-h/2,w,h);else placeholder(l,w,h);ctx.restore()}
-    else{var tx=st.val[l.k]!=null?st.val[l.k]:l.def;if(l.up)tx=tx.toUpperCase();var fam=st.fnt[l.k]||l.font,sc=(st.sz[l.k]||100)/100,pd=l.pad||0,mw=w-2*pd,mh=h-2*pd;if(l.fill){ctx.save();ctx.shadowColor='rgba(0,0,0,.28)';ctx.shadowBlur=10;ctx.fillStyle=l.fill;ctx.fillRect(-w/2,-h/2,w,h);ctx.restore()}
-      var s=autoSize(l,fam,tx.replace(/\[\[|\]\]/g,''),mw,mh),s2=Math.max(8,Math.round(s*sc)),lh=l.lh||1.05;ctx.font=fontStr(l,fam,s2);
-      var cx=l.al==='left'?-w/2:l.al==='right'?w/2:0;ctx.textBaseline='middle';
-      if(l.rich){var parts=tx.split(/(\[\[.*?\]\])/).filter(Boolean).map(function(p){var m=/^\[\[(.*)\]\]$/.exec(p);return{t:m?m[1]:p,c:m?l.rich:l.color}});
-        var tot=parts.reduce(function(a,p){return a+ctx.measureText(p.t).width},0),x=l.al==='left'?cx:l.al==='right'?cx-tot:cx-tot/2;ctx.textAlign='left';parts.forEach(function(p){ctx.fillStyle=p.c;ctx.fillText(p.t,x,0);x+=ctx.measureText(p.t).width})}
-      else{tx=tx.replace(/\[\[|\]\]/g,'');var L=wrapT(tx,mw*(sc>1?1:1)),y0=-(L.length-1)*s2*lh/2;ctx.textAlign=l.al||'center';
-        if(l.sh){ctx.fillStyle=l.sh[2];L.forEach(function(q,i){ctx.fillText(q,cx+l.sh[0],y0+i*s2*lh+l.sh[1])})}
-        ctx.fillStyle=l.color;L.forEach(function(q,i){ctx.fillText(q,cx,y0+i*s2*lh)})}}
-    ctx.restore()});(st.ex||[]).forEach(drawEl)}
+  var z=st.exZ||{};
+  var items=[];
+  v.layers.forEach(function(l,idx){items.push({kind:'L',idx:idx,z:0,obj:l})});
+  (st.ex||[]).forEach(function(e){items.push({kind:'E',z:(z[e.id]!=null?z[e.id]:1),obj:e})});
+  items.sort(function(a,b){return (a.z-b.z)||(a.kind==='L'&&b.kind==='L'?(a.idx-b.idx):0)});
+  items.forEach(function(it){if(it.kind==='L')drawLayer(it.obj,st);else drawEl(it.obj)})}
 
 function fg(s,a,b){ctx.shadowColor='rgba(0,0,0,.35)';ctx.shadowBlur=s*.08;ctx.shadowOffsetY=s*.03;ctx.fillStyle=lin(-s/2,-s/2,s/2,s/2,[[0,a],[1,b]]);ctx.fill();ctx.shadowColor='transparent'}
 function poly(s,p){ctx.beginPath();p.forEach(function(q,i){ctx[i?'lineTo':'moveTo'](q[0]*s,q[1]*s)});ctx.closePath()}
@@ -479,14 +488,16 @@ var SIZES=[['1920×1080 (16:9)',1920,1080],['1080×1080 (квадрат)',1080,1
 var DECO=[['gift','Подарок'],['heart','Сердце'],['coin','Монета'],['money','Купюра'],['pen','Ручка'],['sheet','Листок'],['plus','Плюс'],['star','Звезда'],['crown','Корона'],['gem','Алмаз'],['bolt','Молния'],['trophy','Кубок'],['flame','Огонь'],['shield','Щит'],['sparkle','Искры'],['balloon','Шар'],['arrow','Стрелка'],['confetti','Конфетти'],['curves','Линии-кривые'],['wave','Волна'],['swoosh','Дуги']];
 var CKEY='br-constructor-1',IMGS={},BGI=null,NID=1;
 function newDesign(){return{w:1920,h:1080,bg:{t:'grad',c1:'#8a1de8',c2:'#4a1b9c',ang:135},els:[]}}
-function empty(){return{val:{},fnt:{},sz:{},im:{},ex:[]}}
+function empty(){return{val:{},fnt:{},sz:{},im:{},ex:[],exZ:{}}}
 function mkEl(type,d,extra){var e={id:'e'+(NID++),type:type,x:d.w/2,y:d.h/2,rot:0};
   var base={text:{text:'Ваш текст',font:'Onest',size:120,color:'#ffffff',it:true,wt:800,al:'center',up:true,sh:false,w:Math.round(d.w*.7)},
     rect:{w:600,h:140,r:70,fill:'#a14fb5',fill2:'#591c63',grad:true,stroke:'#ffffff',sw:0},
     img:{w:Math.round(d.w*.4),h:Math.round(d.h*.4),r:40,fr:false},
     deco:{kind:'gift',s:300,c1:'#7d3bf0',c2:'#f0b840',blur:0},
     brand:{s:60,color:'#ffffff'}}[type];
-  for(var k in base)e[k]=base[k];for(var k2 in extra)e[k2]=extra[k2];return e}
+  for(var k in base)e[k]=base[k];for(var k2 in extra)e[k2]=extra[k2];
+  if(e.type==='text'&&(e.al==='left'||e.al==='right'))e._ox=0;
+  return e}
 function bgPaint(d){var b=d.bg,W=d.w,H=d.h;
   if(b.t==='img'&&BGI){var r=Math.max(W/BGI.width,H/BGI.height),iw=BGI.width*r,ih=BGI.height*r;ctx.drawImage(BGI,(W-iw)/2,(H-ih)/2,iw,ih);return}
   if(b.t==='solid'||b.t==='img'){ctx.fillStyle=b.c1;ctx.fillRect(0,0,W,H);return}
@@ -604,9 +615,32 @@ function ctor(){
       else{var f=Math.max(10,Math.abs(l[0]))/drag.l0;if(e.type==='text')e.size=Math.max(10,Math.round(drag.s0*f));else e.s=Math.max(20,Math.round(drag.s0*f))}}
     redraw()});
   function end(){if(drag){drag=null;buildPanel()}}cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
-  var dl=h('button',{class:'b',text:'Скачать PNG',on:{click:function(){var t=document.createElement('canvas');drawDesign(t,d,null);
-    t.toBlob(function(b){fb.querySelector('img').src=t.toDataURL('image/png');fb.style.display='block';if(!b){msg.textContent='Сохраните картинку ниже долгим нажатием.';return}
-      var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='post.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);msg.textContent='Если файл не сохранился, сохраните картинку ниже долгим нажатием.'},'image/png')}}});
+  var dl=h('button',{class:'b',text:'Скачать PNG',on:{click:function(){
+    var t=document.createElement('canvas');drawDesign(t,d,null);
+    t.toBlob(function(b){
+      if(!b){msg.textContent='Не удалось создать файл.';return}
+      var u=URL.createObjectURL(b),a=document.createElement('a');
+      a.href=u;a.download='post.png';
+      if(navigator.canShare){
+        try{
+          var f=new File([b],'post.png',{type:'image/png'});
+          if(navigator.canShare({files:[f]})){
+            navigator.share({files:[f],title:'Афиша'}).catch(function(){});
+            msg.textContent='Открыто меню «Поделиться» — сохраните в Файлы или Галерею.';
+            setTimeout(function(){URL.revokeObjectURL(u)},5000);
+            return;
+          }
+        }catch(e){}
+      }
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(function(){URL.revokeObjectURL(u)},5000);
+      if('ontouchstart' in window){
+        fb.querySelector('img').src=u;fb.style.display='block';
+        msg.textContent='Если файл не сохранился — удерживайте картинку ниже.';
+      }else{
+        msg.textContent='Файл скачан.';
+      }
+    },'image/png')}}});
   var clr=h('button',{class:'b g',text:'Начать заново',on:{click:function(){if(confirm('Очистить холст и начать заново?')){d=newDesign();sel=null;IMGS={};BGI=null;buildPage();buildPanel();buildList();redraw()}}}});
   app.replaceChildren(h('button',{class:'back',text:'← Все шаблоны',on:{click:home}}),h('h1',{text:'Конструктор'}),
     h('p',{text:'Соберите пост с нуля: добавляйте текст, фото, плашки и украшения. Перетаскивайте объекты прямо на картинке. Макет сохраняется автоматически — можно вернуться позже.'}),
@@ -752,7 +786,12 @@ function use(t){leaveCtor();try{localStorage.setItem('br-last',t.id)}catch(e){}
       else if(e.kind==='pen')k.push(exCl('Цвет',e,'c1'));
       else if(['heart','coin','money','sheet'].indexOf(e.kind)<0)k.push(exCl('Цвет 1',e,'c1'),exCl('Цвет 2',e,'c2'))}
     k.unshift(exSl('Положение по горизонтали',e,'x',0,v.w,1),exSl('Положение по вертикали',e,'y',0,v.h,1),exSl('Поворот',e,'rot',-180,180,1));
-    k.push(h('div',{class:'row'},[h('button',{class:'b g',text:'Удалить',on:{click:function(){st.ex.splice(n,1);buildEx();repaint()}}})]));
+    k.push(h('div',{class:'row'},[
+      h('button',{class:'b g',text:'Выше',on:{click:function(){var i=st.ex.indexOf(e);if(i<st.ex.length-1){st.ex.splice(i,1);st.ex.splice(i+1,0,e);buildEx();repaint()}}}}),
+      h('button',{class:'b g',text:'Ниже',on:{click:function(){var i=st.ex.indexOf(e);if(i>0){st.ex.splice(i,1);st.ex.splice(i-1,0,e);buildEx();repaint()}}}}),
+      h('button',{class:'b g',text:(st.exZ[e.id]!=null&&st.exZ[e.id]<0)?'Наверх шаблона':'Под шаблон',on:{click:function(){if(st.exZ[e.id]!=null&&st.exZ[e.id]<0){delete st.exZ[e.id]}else{st.exZ[e.id]=-1}buildEx();repaint();msg.textContent=(st.exZ[e.id]<0?'Элемент под слоями шаблона.':'Элемент снова над слоями шаблона.')}}}),
+      h('button',{class:'b g',text:'Удалить',on:{click:function(){st.ex.splice(n,1);delete st.exZ[e.id];buildEx();repaint()}}})
+    ]));
     exList.appendChild(h('div',{class:'layer'},[h('h2',{text:(n+1)+'. '+exName(e)})].concat(k)))})}
   function addEx(){var k=exSel.value,D={w:v.w,h:v.h},e;
     if(k==='text'||k==='img'||k==='rect')e=mkEl(k,D);
@@ -768,10 +807,30 @@ function use(t){leaveCtor();try{localStorage.setItem('br-last',t.id)}catch(e){}
   function buildChips(){chips.replaceChildren();if(t.variants.length<2)return;t.variants.forEach(function(x,i){chips.appendChild(h('button',{class:'b'+(x===v?'':' g'),text:x.name,on:{click:function(){
     v=x;st=empty();buildChips();buildForm();buildEx();repaint()}}}))})}
   var dl=h('button',{class:'b',text:'Скачать PNG',on:{click:function(){
-    cv.toBlob(function(b){fb.querySelector('img').src=cv.toDataURL('image/png');fb.style.display='block';
-      if(!b){msg.textContent='Сохраните картинку ниже долгим нажатием.';return}
-      var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='afisha.png';document.body.appendChild(a);a.click();a.remove();
-      setTimeout(function(){URL.revokeObjectURL(u)},4000);msg.textContent='Если файл не сохранился, сохраните картинку ниже долгим нажатием.'},'image/png')}}});
+    cv.toBlob(function(b){
+      if(!b){msg.textContent='Не удалось создать файл.';return}
+      var u=URL.createObjectURL(b),a=document.createElement('a');
+      a.href=u;a.download='afisha.png';
+      if(navigator.canShare){
+        try{
+          var f=new File([b],'afisha.png',{type:'image/png'});
+          if(navigator.canShare({files:[f]})){
+            navigator.share({files:[f],title:'Афиша'}).catch(function(){});
+            msg.textContent='Открыто меню «Поделиться» — сохраните в Файлы или Галерею.';
+            setTimeout(function(){URL.revokeObjectURL(u)},5000);
+            return;
+          }
+        }catch(e){}
+      }
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(function(){URL.revokeObjectURL(u)},5000);
+      if('ontouchstart' in window){
+        fb.querySelector('img').src=u;fb.style.display='block';
+        msg.textContent='Если файл не сохранился — удерживайте картинку ниже.';
+      }else{
+        msg.textContent='Файл скачан.';
+      }
+    },'image/png')}}});
   app.replaceChildren(h('button',{class:'back',text:'← Все шаблоны',on:{click:home}}),h('h1',{text:t.title}),h('p',{text:t.desc}),chips,cv,h('div',{class:'row'},[dl,h('button',{class:'b g',text:'Вернуть текст к исходному',on:{click:function(){st.val={};st.fnt={};st.sz={};buildForm();repaint();msg.textContent='Текст возвращён к исходному.'}}}),h('select',{'aria-label':'Формат картинки',on:{change:function(){var q=this.value;FMT=q==='o'?null:[SIZES[+q][1],SIZES[+q][2]];repaint()}}},[['o','Формат: как в шаблоне'],['0','16:9 · 1920×1080'],['1','Квадрат · 1080×1080'],['2','4:5 · 1080×1350'],['3','Сторис · 1080×1920']].map(function(a){return h('option',{value:a[0],text:a[1]})})),h('button',{class:'b g',text:'Скопировать текст',on:{click:function(){copyText(v.layers.filter(function(l){return l.t==='text'&&l.k!=='srv'}).map(function(l){var x=st.val[l.k];return x!=null?x:l.def}).join(String.fromCharCode(10)),function(){msg.textContent='Текст афиши скопирован.'},function(){msg.textContent='Не удалось скопировать.'})}}}),h('button',{class:'b g',text:'Скачать JPEG (легче)',on:{click:function(){cv.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='afisha.jpg';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);msg.textContent='JPEG: '+Math.round(b.size/1024)+' КБ.'},'image/jpeg',.88)}}}),t.variants.length>1?h('button',{class:'b g',text:'Скачать все варианты',on:{click:function(){t.variants.forEach(function(x,i){setTimeout(function(){var c=document.createElement('canvas');draw(c,x,st);c.toBlob(function(b){var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='afisha-'+(i+1)+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);if(i===t.variants.length-1)repaint()})},i*600)});msg.textContent='Скачиваю файлов: '+t.variants.length}}}):null,cap]),msg,fb,form,exBox,h('div',{class:'dock'},[h('button',{class:'b',text:'Скачать PNG',on:{click:function(){dl.click()}}})]));
   buildChips();buildForm();buildEx();repaint();window.scrollTo(0,0);var f0=form.querySelector('input[type=text],textarea');if(f0&&!('ontouchstart' in window))f0.focus({preventScroll:true});
   var used={};t.variants.forEach(function(x){x.layers.forEach(function(l){if(l.t==='text')used[l.font]=1})});Object.keys(used).forEach(function(f){loadFont(f).then(repaint)})}
