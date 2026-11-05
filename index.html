@@ -5,9 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Афиши Black Russia — конструктор постов для сообщества</title>
 <meta name="description" content="Готовые шаблоны афиш и постов для сообщества Black Russia: викторины, битвы, опросы, конкурсы. Меняйте текст, загружайте картинки и скачивайте PNG за минуту.">
-<meta property="og:title" content="Афиши Black Russia">
-<meta property="og:description" content="Шаблоны постов и конструктор афиш для вашего сервера Black Russia.">
+<link rel="canonical" href="https://krigerartem417-cmyk.github.io/RG/">
+<meta property="og:title" content="Афиши Black Russia — конструктор постов">
+<meta property="og:description" content="Шаблоны постов и конструктор афиш для вашего сервера Black Russia. Скачайте готовый PNG за минуту.">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://krigerartem417-cmyk.github.io/RG/">
+<!-- ВАЖНО: загрузите картинку превью 1200×630 в папку сайта под именем og.png (скриншот главной или готовая афиша) -->
+<meta property="og:image" content="https://krigerartem417-cmyk.github.io/RG/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Афиши Black Russia — шаблоны постов для сообщества">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#8a3fd1">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%238a3fd1'/%3E%3Ctext x='32' y='43' font-family='Arial' font-size='26' font-weight='800' fill='white' text-anchor='middle'%3EBR%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Onest:wght@500;800&family=Montserrat:ital,wght@0,500;0,700;0,800;1,500;1,700;1,800&family=Roboto+Condensed:wght@400;700&family=Bebas+Neue&family=Russo+One&family=Unbounded:wght@500;800&family=Rubik:wght@500;800&family=Exo+2:wght@500;800&family=Playfair+Display:wght@500;800&family=Pacifico&family=Caveat:wght@500;700&display=swap">
@@ -25,10 +34,11 @@ h2{font:700 20px Oswald,sans-serif;margin:26px 0 10px}
 p{margin:0 0 12px;color:var(--muted)}
 canvas{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:#222}
 .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;text-align:left;padding:0;color:var(--ink);font:inherit}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;text-align:left;padding:0;color:var(--ink);font:inherit;min-width:0}
 .card img,.card .ph{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#2a1f3a}
-.card span{display:block;padding:10px 12px 2px;font-weight:500}
-.card small{display:block;padding:0 12px 10px;color:var(--muted);font-size:13px;line-height:1.35}
+.card span{display:block;padding:10px 12px 2px;font-weight:500;overflow-wrap:anywhere;line-height:1.3}
+.card small{display:block;padding:0 12px 6px;color:var(--muted);font-size:13px;line-height:1.35;overflow-wrap:anywhere}
+.card .feat{display:inline-block;margin:0 12px 12px;padding:2px 9px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted);line-height:1.5}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 16px 18px;margin-top:16px}
 label{display:block;margin:14px 0 6px;font-weight:500}
 input[type=text],input[type=search],textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 13px;min-height:46px}
@@ -39,7 +49,7 @@ input[type=file]{width:100%;font:inherit;color:var(--ink)}
 button.b{font:500 15px Onest,sans-serif;border:0;border-radius:10px;padding:12px 18px;min-height:46px;cursor:pointer;background:var(--acc);color:var(--acc-ink)}
 button.g{background:transparent;color:var(--ink);border:1px solid var(--line)}
 button.d{background:transparent;color:#c62828;border:1px solid var(--line)}
-:is(button,input,textarea,select):focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+:is(button,input,textarea,select,a,summary):focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 .layer{border:1px solid var(--line);border-radius:12px;padding:4px 14px 14px;margin-top:12px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .msg{min-height:22px;font-size:14px;color:var(--muted);margin-top:8px}
@@ -51,31 +61,38 @@ button.d{background:transparent;color:#c62828;border:1px solid var(--line)}
 .two small{display:inline-block;margin:6px 0 4px;color:var(--muted)}
 .rv{font-size:14px;color:var(--muted)}
 .row button{margin-right:0}
-/* --- новое: главная страница --- */
+/* --- главная страница --- */
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0 6px}
 .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .step b{display:block;font:700 16px Oswald,sans-serif;margin-bottom:4px}
 .step p{margin:0;font-size:14px}
 .promo{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;width:100%;
-  background:linear-gradient(120deg,var(--acc),#5a2fd0);color:#fff;border:0;border-radius:16px;
-  padding:18px 20px;margin:16px 0 4px;cursor:pointer;text-align:left;font:inherit}
+  background:linear-gradient(120deg,#7a2fc4,#4a25b8);color:#fff;border:0;border-radius:16px;
+  padding:18px 20px;margin:22px 0 4px;cursor:pointer;text-align:left;font:inherit}
 .promo b{display:block;font:700 20px Oswald,sans-serif}
-.promo p{margin:4px 0 0;color:rgba(255,255,255,.85);font-size:14px;max-width:460px}
-.promo .go{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:10px;padding:10px 16px;font:600 14px Onest,sans-serif;white-space:nowrap}
+.promo p{margin:4px 0 0;color:rgba(255,255,255,.92);font-size:14px;max-width:460px}
+.promo .go{background:#fff;border:0;color:#4a25b8;border-radius:10px;padding:11px 18px;font:700 15px Onest,sans-serif;white-space:nowrap}
 .promo:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 .search{width:100%;margin:16px 0 10px}
 .fchips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .fchips button{font:500 14px Onest,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer;min-height:36px}
 .fchips button.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.empty{grid-column:1/-1;text-align:center;padding:24px 8px}
+.suggest{margin:14px 0 0;font-size:15px}
+.example{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 16px 16px;margin-top:22px}
+.example canvas{margin-top:6px}
+.example p{margin:10px 0 0;font-size:14px}
 footer{margin-top:36px;border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:14px}
-footer a{color:var(--acc)}
+footer h2{font-size:18px;margin:0 0 8px;color:var(--ink)}
+footer a,.suggest a,details a{color:var(--acc);font-weight:500;text-underline-offset:3px}
+@media (prefers-color-scheme:light){footer a,.suggest a,details a{color:#6d2bb0}}
 details{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:10px;background:var(--card)}
 summary{cursor:pointer;font-weight:500}
 details p{margin:8px 0 4px;font-size:14px}
 </style>
 </head>
 <body>
-<main id="app"></main>
+<main id="app"><noscript><h1>Афиши Black Russia</h1><p>Для работы конструктора включите JavaScript в браузере. Вопросы и идеи шаблонов: <a href="https://vk.com/id676733241" target="_blank" rel="noopener noreferrer">написать во ВКонтакте</a>.</p></noscript></main>
 <script>
 (function(){
 /* полифилл roundRect для старых браузеров */
@@ -85,7 +102,7 @@ if(window.CanvasRenderingContext2D&&!CanvasRenderingContext2D.prototype.roundRec
     this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);
     this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this}}
 var ctx;
-var CONTACT_URL='#'; /* замените на ссылку на ваше сообщество (VK/Telegram) */
+var CONTACT_URL='https://vk.com/id676733241';
 var FONTS=['Oswald','Onest','Montserrat','Roboto Condensed','Bebas Neue','Russo One','Unbounded','Rubik','Exo 2','Playfair Display','Pacifico','Caveat'];
 function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
 function mixc(hex,t,to){var n=parseInt(hex.slice(1),16),r=n>>16&255,g=n>>8&255,b=n&255,k=to?255:0;return 'rgb('+Math.round(r+(k-r)*t)+','+Math.round(g+(k-g)*t)+','+Math.round(b+(k-b)*t)+')'}
@@ -251,21 +268,22 @@ var navy=function(W,H){ctx.fillStyle=lin(0,0,W,H,[[0,'#101a40'],[1,'#080e2a']]);
   ctx.save();ctx.translate(920,360);ctx.rotate(.25);ctx.fillStyle=rad(0,0,120,[[0,'#8fa8ff'],[1,'#4a62e0']]);ctx.font='800 220px Onest, Arial Black, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('?',0,0);ctx.restore()};
 var orange=function(W,H){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);lines([[0,60,200,0,320,60,400,0],[820,200,900,230,960,260,W,300],[0,800,60,700,70,620,160,540],[280,1100,330,1200,350,1260,370,H],[480,1200,490,1260,480,1300,480,H],[900,620,960,660,1000,700,W,780],[900,900,960,940,1000,980,W,1060]],'#ff6a00',2.5)};
 
+/* title — название карточки «формат — крючок»; feat — полезная метка вместо числа вариантов */
 var DATA=[
- {id:'quiz',name:'Викторина',desc:'Вопрос с призом за правильный ответ',tags:'quiz',variants:[quizV()]},
- {id:'battle',name:'Битва',desc:'Два скина или машины лицом к лицу — голосуйте',tags:'contest',variants:[BATTLE1,BATTLE2]},
- {id:'far',name:'Угадай по фаре',desc:'Три фото фар — угадай машины и получи приз',tags:'guess contest',variants:[farV()]},
- {id:'interior',name:'Угадай интерьер',desc:'Угадай интерьер по скриншоту',tags:'guess',variants:[interiorV()]},
- {id:'repeat',name:'Повтори фото',desc:'Повтори фото в игре и получи приз',tags:'guess contest',variants:[repeatV()]},
- {id:'opinion',name:'Хотим услышать ваше мнение',desc:'Опрос с листком и ручкой — соберите мнения игроков',tags:'poll',variants:[
+ {id:'quiz',name:'Викторина',title:'Викторина — на знание сервера',feat:'с призом',desc:'Вопрос с призом за правильный ответ',tags:'quiz',variants:[quizV()]},
+ {id:'battle',name:'Битва',title:'Битва — скины и машины',feat:'с 2 картинками',desc:'Два скина или машины лицом к лицу — голосуйте',tags:'contest',variants:[BATTLE1,BATTLE2]},
+ {id:'far',name:'Угадай по фаре',title:'Угадай — машины по фарам',feat:'с 3 картинками',desc:'Три фото фар — угадай машины и получи приз',tags:'guess contest',variants:[farV()]},
+ {id:'interior',name:'Угадай интерьер',title:'Угадай — интерьер по скриншоту',feat:'со скриншотом',desc:'Угадай интерьер по скриншоту',tags:'guess',variants:[interiorV()]},
+ {id:'repeat',name:'Повтори фото',title:'Конкурс — повтори фото',feat:'с фото и призом',desc:'Повтори фото в игре и получи приз',tags:'guess contest',variants:[repeatV()]},
+ {id:'opinion',name:'Хотим услышать ваше мнение',title:'Опрос — Хотим услышать ваше мнение',feat:'с вопросом',desc:'Опрос с листком и ручкой — соберите мнения игроков',tags:'poll',variants:[
   opinionV('Фиолетовый',{w:1000,bg:function(W,H){return lin(0,0,W,H,[[0,'#8a1de8'],[1,'#4a1b9c']])},glow:'rgba(190,100,255,.4)',sheets:[[-70,570,230,320,-.5],[660,430,360,420,-.45]],px:292,py:288,pw:270,ph:410,pr:-.03,pen:[700,330,566,464],pc:'#8a4fd0',pillx:212,pilly:170,pillw:558,pillh:108,pill:'#b571f2',q:'Какую машину вы бы добавили в игру',layers:[T('title','Заголовок','Хотим услышать',100,70,830,80)]}),
   opinionV('Чёрный',{w:1000,bg:function(W,H){return '#070707'},glow:'rgba(70,50,40,.35)',sheets:[[-90,170,260,420,.5],[-20,500,300,380,.4]],px:292,py:288,pw:270,ph:410,pr:-.03,pen:[700,330,566,464],pc:'#3a3a3e',pillx:212,pilly:170,pillw:558,pillh:108,pill:function(){return lin(212,170,770,278,[[0,'#8a8a8e'],[1,'#3c3c40']])},q:'Справедливо ли администрация выдает наказания',layers:[T('title','Заголовок','Хотим услышать',100,70,830,80)]}),
   opinionV('Красный',{w:698,bg:function(W,H){return lin(0,0,W,H,[[0,'#e5262d'],[1,'#8f1a22']])},glow:'rgba(255,100,100,.3)',sheets:[[-30,690,220,240,.3],[560,700,200,200,.4]],px:150,py:300,pw:290,ph:400,pr:-.03,pen:[560,325,426,459],pc:'#e5262d',pillx:98,pilly:195,pillw:480,pillh:88,pill:'#b0141c',srv:[235,725,230,50],q:'Какую рубрику вы бы хотели увидеть в нашем сообществе?',layers:[T('title','Заголовок','Хотим услышать',90,25,520,150),T('srv','Сервер','Surgut',255,731,190,38)]})]},
- {id:'like',name:'От твоего лайка зависит',desc:'4 варианта под лайк: от скина до машины',tags:'poll contest',variants:[likeV('Скины','Твой скин на Black Russia','#e01919'),likeV('Машины','Твоя машина на Black Russia','#c01818')]},
- {id:'knew',name:'А вы знали?',desc:'Факт о сервере в фирменной подаче',tags:'quiz',variants:[
+ {id:'like',name:'От твоего лайка зависит',title:'Голосование — От твоего лайка зависит',feat:'с 4 фото',desc:'4 варианта под лайк: от скина до машины',tags:'poll contest',variants:[likeV('Скины','Твой скин на Black Russia','#e01919'),likeV('Машины','Твоя машина на Black Russia','#c01818')]},
+ {id:'knew',name:'А вы знали?',title:'Факт — А вы знали?',feat:'с текстом факта',desc:'Факт о сервере в фирменной подаче',tags:'quiz',variants:[
   knewV('Синий',{h:1098,bg:navy,s1:'#1a2f9a',s2:'#2a4fe0',st:'rgba(150,180,255,.6)',ty:112,th:143,tfill:function(){return '#12308f'},bx:50,by:455,bw:880,bh:495,bfill:function(){return '#10299a'},tf:{font:'Oswald',wt:700},bf:{font:'Oswald',wt:700},body:'С открытия сервера было подано 710 заявлений на пост лидера',au:true}),
   knewV('Оранжевый',{h:1348,bg:orange,s1:'#d4570a',s2:'#ff7a10',st:'rgba(255,255,255,.5)',ty:135,th:180,tfill:function(){return lin(80,0,915,0,[[0,'#c85300'],[.5,'#ff6a00'],[1,'#c04e00']])},bx:75,by:520,bw:845,bh:590,bfill:function(){return lin(75,520,920,1110,[[0,'#c85300'],[.5,'#ff6a00'],[1,'#c04e00']])},tf:{font:'Onest',wt:800},bf:{font:'Montserrat',wt:700,up:false},body:'Интерьер СМИ не обновлялся с момента выхода игры.'})]},
- {id:'fact',name:'Интересный факт',desc:'Пост-факт со скриншотом и выделенной строкой',tags:'quiz',variants:[factV()]}
+ {id:'fact',name:'Интересный факт',title:'Факт — Интересный факт',feat:'со скриншотом',desc:'Пост-факт со скриншотом и выделенной строкой',tags:'quiz',variants:[factV()]}
 ];
 
 /* ---------- текст и рисование ---------- */
@@ -341,7 +359,7 @@ function drawDesign(cv,d,sel){ctx=cv.getContext('2d');cv.width=d.w;cv.height=d.h
     ctx.strokeStyle='#00e5ff';ctx.lineWidth=2*sc;ctx.setLineDash([8*sc,6*sc]);ctx.strokeRect(-bx[0]/2,-bx[1]/2,bx[0],bx[1]);ctx.setLineDash([]);ctx.fillStyle='#00e5ff';ctx.fillRect(bx[0]/2-8*sc,bx[1]/2-8*sc,16*sc,16*sc);ctx.restore()}}
 function ctor(){
   var d=newDesign(),sel=null;try{var sv=JSON.parse(localStorage.getItem(CKEY)||'null');if(sv&&sv.els&&sv.w){d=sv;d.els.forEach(function(e){var n=parseInt(e.id.slice(1),10);if(n>=NID)NID=n+1})}}catch(x){}
-  var cv=h('canvas',{'aria-label':'Холст',style:'touch-action:none;cursor:grab'}),msg=h('div',{class:'msg',role:'status'}),panel=h('div',{class:'panel'}),list=h('div',{class:'row'}),page=h('div',{class:'panel'}),
+  var cv=h('canvas',{'aria-label':'Холст',role:'img',style:'touch-action:none;cursor:grab'}),msg=h('div',{class:'msg',role:'status'}),panel=h('div',{class:'panel'}),list=h('div',{class:'row'}),page=h('div',{class:'panel'}),
     fb=h('div',{id:'fallback'},[h('p',{text:'Нажмите на картинку и удерживайте, чтобы сохранить её.'}),h('img',{alt:'Готовая картинка'})]),
     capC=h('small',{class:'rv'});
   function save(){try{localStorage.setItem(CKEY,JSON.stringify(d))}catch(x){}}
@@ -412,58 +430,77 @@ function ctor(){
     h('p',{text:'Соберите пост с нуля: добавляйте текст, фото, плашки и украшения. Перетаскивайте объекты прямо на картинке. Макет сохраняется автоматически — можно вернуться позже.'}),
     cv,h('div',{class:'row'},[dl,clr,capC]),msg,fb,h('h2',{text:'Добавить'}),addRow,decoRow,h('h2',{text:'Объекты'}),list,panel,page);
   buildPage();buildPanel();buildList();redraw();FONTS.slice(0,4).forEach(function(f){loadFont(f).then(redraw)});
-  var used={};d.els.forEach(function(e){if(e.font)used[e.font]=1});Object.keys(used).forEach(function(f){loadFont(f).then(redraw)})}
+  var used={};d.els.forEach(function(e){if(e.font)used[e.font]=1});Object.keys(used).forEach(function(f){loadFont(f).then(redraw)});
+  window.scrollTo(0,0)}
 /*UI*/
 var app=document.getElementById('app'),repaint=function(){},BIG=document.createElement('canvas'),thumbs=[];
 function h(tag,a,kids){var e=document.createElement(tag);for(var k in (a||{})){var v=a[k];if(v==null)continue;if(k==='on'){for(var ev in v)e.addEventListener(ev,v[ev])}else if(k==='text')e.textContent=v;else e.setAttribute(k,v)}
   (kids||[]).forEach(function(c){if(c!=null)e.appendChild(typeof c==='string'?document.createTextNode(c):c)});return e}
+/* ссылка на ВКонтакте: осмысленный текст, новая вкладка, безопасные атрибуты */
+function vk(text){return h('a',{href:CONTACT_URL,target:'_blank',rel:'noopener noreferrer',text:text})}
 function readImg(file,ok,fail){var r=new FileReader();r.onerror=function(){if(fail)fail()};r.onload=function(){var i=new Image();i.onload=function(){ok(i)};i.onerror=function(){if(fail)fail()};i.src=r.result};r.readAsDataURL(file)}
 function loadFont(f){if(!document.fonts||!document.fonts.load)return Promise.resolve();return Promise.all([300,500,700,800].map(function(w){return document.fonts.load(w+' 40px "'+f+'"','Аб')})).catch(function(){})}
 function empty(){return{val:{},fnt:{},sz:{},im:{}}}
 function drawThumb(tc,v){draw(BIG,v,empty());tc.width=480;tc.height=Math.round(480*v.h/v.w);tc.getContext('2d').drawImage(BIG,0,0,tc.width,tc.height)}
 function home(){thumbs=[];
   var si=h('input',{type:'search',class:'search',placeholder:'Найти шаблон: викторина, угадай, опрос…','aria-label':'Поиск шаблонов'});
-  var fchips=h('div',{class:'fchips'});
+  var fchips=h('div',{class:'fchips',role:'group','aria-label':'Категории шаблонов'});
   var grid=h('div',{class:'grid'});
   var CATS=[['all','Все'],['quiz','Викторины и факты'],['guess','Угадай'],['poll','Опросы'],['contest','Конкурсы']];
   var cur='all';
-  function applyFilter(){var q=si.value.trim().toLowerCase();grid.replaceChildren();
+  function applyFilter(){var q=si.value.trim().toLowerCase(),n=0;grid.replaceChildren();
     DATA.forEach(function(t,i){
       if(cur!=='all'&&t.tags.split(' ').indexOf(cur)<0)return;
-      if(q&&(t.name+' '+t.tags+' '+t.desc).toLowerCase().indexOf(q)<0)return;
-      var tc=h('canvas',{'aria-label':'Превью шаблона: '+t.name});
+      if(q&&(t.title+' '+t.name+' '+t.tags+' '+t.desc).toLowerCase().indexOf(q)<0)return;
+      n++;
+      var tc=h('canvas',{role:'img','aria-label':'Превью шаблона: '+t.title});
       var card=h('button',{class:'card',on:{click:function(){use(t)}}},[tc,
-        h('span',{text:t.name+(t.variants.length>1?' · вариантов: '+t.variants.length:'')}),
-        h('small',{text:t.desc+' · '+t.variants[0].w+'×'+t.variants[0].h})]);
+        h('span',{text:t.title}),
+        h('small',{text:t.desc}),
+        h('i',{class:'feat',style:'font-style:normal',text:t.feat})]);
       grid.appendChild(card);
-      (function(c,v){setTimeout(function(){try{drawThumb(c,v)}catch(e){}},30)})(tc,t.variants[0])})}
+      (function(c,v){setTimeout(function(){try{drawThumb(c,v)}catch(e){}},30)})(tc,t.variants[0])});
+    if(!n)grid.appendChild(h('div',{class:'empty'},[h('p',{text:'Такого шаблона пока нет. '}),vk('Напишите во ВКонтакте'),' — сделаю шаблон под вас.']))}
   si.addEventListener('input',applyFilter);
   CATS.forEach(function(c,i){fchips.appendChild(h('button',{class:i===0?'on':'',text:c[1],on:{click:function(){
     cur=c[0];[].forEach.call(fchips.children,function(b){b.classList.remove('on')});this.classList.add('on');applyFilter()}}}))});
-  var promo=h('button',{class:'promo',on:{click:ctor}},[
-    h('div',{},[h('b',{text:'Конструктор: сделать с нуля'}),h('p',{text:'Свободный холст: текст, фото, плашки и украшения. Макет сохраняется автоматически.'})]),
-    h('span',{class:'go',text:'Открыть →'})]);
   var steps=h('div',{class:'steps'},[
     h('div',{class:'step'},[h('b',{text:'1. Выберите шаблон'}),h('p',{text:'Или соберите пост с нуля в конструкторе.'})]),
-    h('div',{class:'step'},[h('b',{text:'2. Поменяйте текст и фото'}),h('p',{text:'Загрузите свои картинки, настройте шрифты и размеры.'})]),
+    h('div',{class:'step'},[h('b',{text:'2. Поменяйте текст и фото'}),h('p',{text:'Загрузите свои картинки, выберите из встроенных шрифтов и размеров.'})]),
     h('div',{class:'step'},[h('b',{text:'3. Скачайте PNG'}),h('p',{text:'Готово для публикации в VK, Telegram или Discord.'})])]);
-  var faq=h('div',{class:'panel'},[h('h2',{text:'Частые вопросы'}),
-    h('details',{},[h('summary',{text:'Какой формат у готовой афиши?'}),h('p',{text:'PNG в разрешении шаблона (обычно 1920×1080, 16:9). Форматы «квадрат», «4:5» и «сторис» доступны в конструкторе.'})]),
+  /* кнопка «Создать с нуля» — отдельный блок сразу после сетки шаблонов */
+  var promo=h('button',{class:'promo',on:{click:ctor}},[
+    h('div',{},[h('b',{text:'Не нашли подходящий шаблон?'}),h('p',{text:'Соберите афишу с нуля: свободный холст, текст, фото, плашки и украшения. Макет сохраняется автоматически.'})]),
+    h('span',{class:'go',text:'Создать с нуля →'})]);
+  var suggest=h('p',{class:'suggest'},['Нужен другой формат? ',vk('Напишите во ВКонтакте'),' — сделаю шаблон под вас или добавлю вашу идею. ',vk('Предложить шаблон')]);
+  /* пример готовой афиши */
+  var exCv=h('canvas',{role:'img','aria-label':'Пример готовой афиши: викторина на знание сервера с призом'});
+  var example=h('section',{class:'example','aria-labelledby':'ex-h'},[h('h2',{id:'ex-h',text:'Пример готовой афиши'}),exCv,
+    h('p',{text:'Так выглядит результат: шаблон «Викторина», в котором заменили заголовок, вопрос и приз. Скачивается как PNG.'})]);
+  var faq=h('section',{class:'panel','aria-labelledby':'faq-h'},[h('h2',{id:'faq-h',text:'Частые вопросы'}),
+    h('details',{},[h('summary',{text:'Это бесплатно?'}),h('p',{text:'Да, пользоваться шаблонами и конструктором можно бесплатно: без регистрации и оплаты.'})]),
+    h('details',{},[h('summary',{text:'Какой формат у готовой афиши?'}),h('p',{text:'PNG. Шаблоны скачиваются в своём размере (чаще всего 1920×1080, 16:9). В конструкторе можно выбрать: 16:9 (1920×1080), квадрат (1080×1080), 4:5 (1080×1350), сторис (1080×1920) и 1781×1057.'})]),
     h('details',{},[h('summary',{text:'Можно ли использовать свои шрифты?'}),h('p',{text:'Свои шрифты загрузить нельзя, но доступно 12 встроенных шрифтов, включая Oswald, Russo One и Bebas Neue.'})]),
     h('details',{},[h('summary',{text:'Сохраняется ли макет?'}),h('p',{text:'Да. Макет конструктора автоматически сохраняется в браузере и будет на месте при следующем открытии страницы.'})]),
-    h('details',{},[h('summary',{text:'Что делать, если картинка не скачивается?'}),h('p',{text:'На мобильных браузерах нажмите на готовую картинку под кнопкой скачивания и удерживайте её, чтобы сохранить в галерею.'})])]);
+    h('details',{},[h('summary',{text:'Что делать, если картинка не скачивается?'}),h('p',{text:'На мобильных браузерах нажмите на готовую картинку под кнопкой скачивания и удерживайте её, чтобы сохранить в галерею.'})]),
+    h('details',{},[h('summary',{text:'Куда писать, если что-то не работает или есть идея шаблона?'}),h('p',{},['Пишите во ВКонтакте: ',vk('vk.com/id676733241'),'. Принимаю сообщения об ошибках, вопросы и предложения новых шаблонов.'])]),
+    h('details',{},[h('summary',{text:'Можно ли использовать афиши в коммерческих целях?'}),h('p',{},['Шаблоны сделаны для сообществ игроков Black Russia. Если планируете использовать афиши в коммерческих целях, уточните условия у автора: ',vk('написать во ВКонтакте'),'.'])])]);
   var ft=h('footer',{},[
-    h('p',{text:'Экспорт: PNG · Форматы: 16:9, квадрат, сторис · Платформы: VK, Telegram, Discord'}),
-    h('p',{},['Шаблоны для сообщества Black Russia. Не работает или нужен новый формат? ','Напишите нам','.'])]);
-  ft.querySelector('a')||ft.lastChild.appendChild(h('a',{href:CONTACT_URL,text:'Напишите нам'}));
+    h('h2',{text:'Связь и сообщество'}),
+    h('p',{},['ВКонтакте: ',vk('vk.com/id676733241'),' — вопросы, баги, предложения шаблонов.']),
+    h('p',{text:'Экспорт: PNG · Форматы: 16:9, квадрат, 4:5, сторис · Платформы: VK, Telegram, Discord'}),
+    h('p',{text:'Шаблоны для сообщества Black Russia.'})]);
+  /* порядок: заголовок → как это работает → шаблоны → «Создать с нуля» → пример → FAQ → футер */
   app.replaceChildren(
     h('h1',{text:'Афиши Black Russia'}),
     h('p',{text:'Готовые шаблоны постов для вашего сервера: викторины, битвы, опросы и конкурсы. Поменяйте текст, загрузите картинки и скачайте PNG за минуту.'}),
-    steps,promo,
-    h('h2',{text:'Шаблоны'}),si,fchips,grid,faq,ft);
-  applyFilter()}
+    steps,
+    h('h2',{text:'Шаблоны'}),si,fchips,grid,
+    promo,suggest,example,faq,ft);
+  setTimeout(function(){try{drawThumb(exCv,DATA[0].variants[0])}catch(e){}},30);
+  applyFilter();window.scrollTo(0,0)}
 function use(t){
-  var v=t.variants[0],st=empty(),cv=h('canvas',{'aria-label':'Предпросмотр'}),msg=h('div',{class:'msg',role:'status'}),
+  var v=t.variants[0],st=empty(),cv=h('canvas',{'aria-label':'Предпросмотр',role:'img'}),msg=h('div',{class:'msg',role:'status'}),
     fb=h('div',{id:'fallback'},[h('p',{text:'Нажмите на картинку и удерживайте, чтобы сохранить её.'}),h('img',{alt:'Готовая афиша'})]),form=h('div',{class:'panel'}),chips=h('div',{class:'row'}),
     cap=h('small',{class:'rv'});
   repaint=function(){draw(cv,v,st);cap.textContent='PNG · '+v.w+'×'+v.h};
@@ -490,8 +527,8 @@ function use(t){
       if(!b){msg.textContent='Сохраните картинку ниже долгим нажатием.';return}
       var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='afisha.png';document.body.appendChild(a);a.click();a.remove();
       setTimeout(function(){URL.revokeObjectURL(u)},4000);msg.textContent='Если файл не сохранился, сохраните картинку ниже долгим нажатием.'},'image/png')}}});
-  app.replaceChildren(h('button',{class:'back',text:'← Все шаблоны',on:{click:home}}),h('h1',{text:t.name}),h('p',{text:t.desc}),chips,cv,h('div',{class:'row'},[dl,cap]),msg,fb,form);
-  buildChips();buildForm();repaint();
+  app.replaceChildren(h('button',{class:'back',text:'← Все шаблоны',on:{click:home}}),h('h1',{text:t.title}),h('p',{text:t.desc}),chips,cv,h('div',{class:'row'},[dl,cap]),msg,fb,form);
+  buildChips();buildForm();repaint();window.scrollTo(0,0);
   var used={};t.variants.forEach(function(x){x.layers.forEach(function(l){if(l.t==='text')used[l.font]=1})});Object.keys(used).forEach(function(f){loadFont(f).then(repaint)})}
 home();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){thumbs.forEach(function(p){try{drawThumb(p[0],p[1])}catch(e){}})});
