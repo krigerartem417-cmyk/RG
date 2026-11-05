@@ -171,6 +171,7 @@ footer a,.suggest a,details a{color:var(--link,var(--acc));font-weight:500;text-
 details{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:10px;background:var(--card)}
 summary{cursor:pointer;font-weight:500}
 details p{margin:8px 0 4px;font-size:14px}
+/*__v3*//*__v4*//*__v5*/.av{width:56px;height:56px;border-radius:50%;background:var(--acc);color:var(--acc-ink);display:flex;align-items:center;justify-content:center;font:700 22px Oswald,sans-serif;margin:6px 0 10px}.hint{border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14px;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap}.dock{position:sticky;bottom:0;z-index:5;padding:10px 0 4px;margin-top:14px;background:var(--bg);border-top:1px solid var(--line)}.dock .b{width:100%}
 </style>
 </head>
 <body>
@@ -400,7 +401,7 @@ function draw(cv,v,st){ctx=cv.getContext('2d');cv.width=v.w;cv.height=v.h;ctx.cl
 function fg(s,a,b){ctx.shadowColor='rgba(0,0,0,.35)';ctx.shadowBlur=s*.08;ctx.shadowOffsetY=s*.03;ctx.fillStyle=lin(-s/2,-s/2,s/2,s/2,[[0,a],[1,b]]);ctx.fill();ctx.shadowColor='transparent'}
 function poly(s,p){ctx.beginPath();p.forEach(function(q,i){ctx[i?'lineTo':'moveTo'](q[0]*s,q[1]*s)});ctx.closePath()}
 function seg(s,p,c,w){ctx.strokeStyle=c;ctx.lineWidth=s*w;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();p.forEach(function(q,i){ctx[i?'lineTo':'moveTo'](q[0]*s,q[1]*s)});ctx.stroke()}
-var EXD={star:['#ffd54a','#f09a1a'],crown:['#ffd54a','#d9861a'],gem:['#7fe8ff','#2a6be0'],bolt:['#fff176','#ff9800'],trophy:['#ffd54a','#d9861a'],flame:['#ffd23f','#ff4a1f'],shield:['#8a3fd1','#4a25b8'],sparkle:['#ffffff','#c9a3ff'],balloon:['#ff4d6d','#c9184a'],arrow:['#ff3b3f','#a50a14'],confetti:['#ffd54a','#ff4d6d']};
+var EXD={star:['#ffd54a','#f09a1a'],crown:['#ffd54a','#d9861a'],gem:['#7fe8ff','#2a6be0'],bolt:['#fff176','#ff9800'],trophy:['#ffd54a','#d9861a'],flame:['#ffd23f','#ff4a1f'],shield:['#8a3fd1','#4a25b8'],sparkle:['#ffffff','#c9a3ff'],balloon:['#ff4d6d','#c9184a'],arrow:['#ff3b3f','#a50a14'],confetti:['#ffd54a','#ff4d6d'],curves:['#e01919','#e01919'],wave:['#8a3fd1','#8a3fd1'],swoosh:['#ffffff','#ffffff']};
 var EXTRA={
 star:function(s,a,b){ctx.beginPath();for(var i=0;i<10;i++){var r=i%2?s*.21:s*.5,q=-Math.PI/2+i*Math.PI/5;ctx[i?'lineTo':'moveTo'](Math.cos(q)*r,Math.sin(q)*r)}ctx.closePath();fg(s,a,b);ctx.lineJoin='round';ctx.lineWidth=s*.04;ctx.strokeStyle=mixc(b,.3,1);ctx.stroke()},
 crown:function(s,a,b){poly(s,[[-.5,.3],[-.5,-.25],[-.22,.02],[0,-.4],[.22,.02],[.5,-.25],[.5,.3]]);fg(s,a,b);rr(-.5*s,.3*s,s,.16*s,s*.04);ctx.fillStyle=b;ctx.fill();
@@ -422,6 +423,10 @@ balloon:function(s,a,b){ctx.strokeStyle='rgba(255,255,255,.7)';ctx.lineWidth=s*.
   ctx.beginPath();ctx.ellipse(0,-.1*s,.3*s,.38*s,0,0,7);fg(s,a,b);ctx.beginPath();ctx.moveTo(0,.3*s);ctx.lineTo(-.05*s,.37*s);ctx.lineTo(.05*s,.37*s);ctx.closePath();ctx.fillStyle=b;ctx.fill();
   ctx.fillStyle='rgba(255,255,255,.4)';ctx.beginPath();ctx.ellipse(-.1*s,-.22*s,.06*s,.12*s,.5,0,7);ctx.fill()},
 arrow:function(s,a,b){poly(s,[[-.5,-.15],[.1,-.15],[.1,-.35],[.5,0],[.1,.35],[.1,.15],[-.5,.15]]);fg(s,a,b)},
+
+curves:function(s,a,b,w){ctx.strokeStyle=a;ctx.lineWidth=w;ctx.lineCap='round';[[-.5,.15,-.3,-.2,.1,.2,.5,-.1],[-.5,0,-.2,-.3,.2,-.05,.5,-.22],[-.5,.25,-.1,.02,.25,.3,.5,.12]].forEach(function(p){ctx.beginPath();ctx.moveTo(p[0]*s,p[1]*s);ctx.bezierCurveTo(p[2]*s,p[3]*s,p[4]*s,p[5]*s,p[6]*s,p[7]*s);ctx.stroke()})},
+wave:function(s,a,b,w){ctx.strokeStyle=a;ctx.lineWidth=w;ctx.lineCap='round';[-.12,0,.12].forEach(function(y,j){ctx.beginPath();ctx.moveTo(-.5*s,y*s);for(var i=0;i<4;i++){var x=-.5+i*.25;ctx.quadraticCurveTo((x+.125)*s,(y+((i+j)%2?.1:-.1))*s,(x+.25)*s,y*s)}ctx.stroke()})},
+swoosh:function(s,a,b,w){ctx.strokeStyle=a;ctx.lineWidth=w;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(-.5*s,.2*s);ctx.bezierCurveTo(-.2*s,-.3*s,.25*s,-.3*s,.5*s,0);ctx.stroke();ctx.beginPath();ctx.moveTo(-.5*s,.28*s);ctx.bezierCurveTo(-.15*s,-.1*s,.2*s,-.15*s,.5*s,.2*s);ctx.stroke();ctx.lineWidth=w*.5;ctx.beginPath();ctx.moveTo(-.5*s,.12*s);ctx.bezierCurveTo(-.25*s,-.4*s,.3*s,-.35*s,.5*s,-.15*s);ctx.stroke()},
 confetti:function(s,a,b){var cs=[a,b,'#ffffff','#4ad8ff'],n=1;for(var i=0;i<28;i++){n=(n*9301+49297)%233280;var x=(n/233280-.5)*s;n=(n*9301+49297)%233280;var y=(n/233280-.5)*s;n=(n*9301+49297)%233280;
   ctx.save();ctx.translate(x,y);ctx.rotate(n/233280*6.28);ctx.fillStyle=cs[i%4];ctx.fillRect(-s*.03,-s*.015,s*.06,s*.03);ctx.restore()}}
 };
@@ -429,7 +434,7 @@ confetti:function(s,a,b){var cs=[a,b,'#ffffff','#4ad8ff'],n=1;for(var i=0;i<28;i
 /* ---------- конструктор ---------- */
 var PAL={'Фиолетовый':['#8a1de8','#4a1b9c'],'Красный':['#e5262d','#8f1a22'],'Синий':['#2c64c4','#1c40b4'],'Тёмный':['#2a2230','#0d0a12'],'Бирюзовый':['#2a8a90','#173e44'],'Оранжевый':['#ff7a10','#c04e00']};
 var SIZES=[['1920×1080 (16:9)',1920,1080],['1080×1080 (квадрат)',1080,1080],['1080×1350 (4:5)',1080,1350],['1080×1920 (сторис)',1080,1920],['1781×1057',1781,1057]];
-var DECO=[['gift','Подарок'],['heart','Сердце'],['coin','Монета'],['money','Купюра'],['pen','Ручка'],['sheet','Листок'],['plus','Плюс'],['star','Звезда'],['crown','Корона'],['gem','Алмаз'],['bolt','Молния'],['trophy','Кубок'],['flame','Огонь'],['shield','Щит'],['sparkle','Искры'],['balloon','Шар'],['arrow','Стрелка'],['confetti','Конфетти']];
+var DECO=[['gift','Подарок'],['heart','Сердце'],['coin','Монета'],['money','Купюра'],['pen','Ручка'],['sheet','Листок'],['plus','Плюс'],['star','Звезда'],['crown','Корона'],['gem','Алмаз'],['bolt','Молния'],['trophy','Кубок'],['flame','Огонь'],['shield','Щит'],['sparkle','Искры'],['balloon','Шар'],['arrow','Стрелка'],['confetti','Конфетти'],['curves','Линии-кривые'],['wave','Волна'],['swoosh','Дуги']];
 var CKEY='br-constructor-1',IMGS={},BGI=null,NID=1;
 function newDesign(){return{w:1920,h:1080,bg:{t:'grad',c1:'#8a1de8',c2:'#4a1b9c',ang:135},els:[]}}
 function mkEl(type,d,extra){var e={id:'e'+(NID++),type:type,x:d.w/2,y:d.h/2,rot:0};
@@ -444,7 +449,7 @@ function bgPaint(d){var b=d.bg,W=d.w,H=d.h;
   if(b.t==='solid'||b.t==='img'){ctx.fillStyle=b.c1;ctx.fillRect(0,0,W,H);return}
   var a=b.ang*Math.PI/180,r2=Math.hypot(W,H)/2,cx=W/2,cy=H/2;ctx.fillStyle=lin(cx-Math.cos(a)*r2,cy-Math.sin(a)*r2,cx+Math.cos(a)*r2,cy+Math.sin(a)*r2,[[0,b.c1],[1,b.c2]]);ctx.fillRect(0,0,W,H)}
 function elBox(e){if(e.type==='text')return[e._bw||e.w,e._bh||e.size];if(e.type==='brand')return[e._bw||e.s*7,e.s*1.1];
-  if(e.type==='deco'){var s=e.s;return e.kind==='money'?[s,s*.56]:e.kind==='pen'?[s,s*.2]:e.kind==='sheet'?[s*.7,s]:e.kind==='heart'?[s*1.05,s*.95]:[s,s]}return[e.w,e.h]}
+  if(e.type==='deco'){var s=e.s;return /^(curves|wave|swoosh)$/.test(e.kind)?[s,s*.5]:e.kind==='money'?[s,s*.56]:e.kind==='pen'?[s,s*.2]:e.kind==='sheet'?[s*.7,s]:e.kind==='heart'?[s*1.05,s*.95]:[s,s]}return[e.w,e.h]}
 function drawEl(e){ctx.save();
   if(e.type==='deco'&&e.blur)ctx.filter='blur('+e.blur+'px)';
   ctx.translate(e.x,e.y);ctx.rotate(e.rot*Math.PI/180);
@@ -464,7 +469,7 @@ function drawEl(e){ctx.save();
     else if(k==='money')money(e.x,e.y,s,s*.56,r,0);
     else if(k==='pen'){var c=Math.cos(r)*s/2,sn=Math.sin(r)*s/2;pen(e.x-c,e.y-sn,e.x+c,e.y+sn,e.c1,0)}
     else if(k==='sheet')sheet(e.x-s*.35,e.y-s/2,s*.7,s,r,0);
-    else{ctx.translate(e.x,e.y);ctx.rotate(r);if(k==='heart')heart(0,0,s/2.7);else if(k==='coin')coin(0,0,s/2,0);else if(EXTRA[k])EXTRA[k](s,e.c1,e.c2);else plus(0,0,s/130,0,e.c1,e.c2)}}
+    else{ctx.translate(e.x,e.y);ctx.rotate(r);if(k==='heart')heart(0,0,s/2.7);else if(k==='coin')coin(0,0,s/2,0);else if(EXTRA[k])EXTRA[k](s,e.c1,e.c2,e.lw||3);else plus(0,0,s/130,0,e.c1,e.c2)}}
   ctx.restore()}
 function drawDesign(cv,d,sel){ctx=cv.getContext('2d');cv.width=d.w;cv.height=d.h;ctx.clearRect(0,0,d.w,d.h);bgPaint(d);d.els.forEach(drawEl);
   if(sel){var bx=elBox(sel),sc=cv.width/Math.max(cv.clientWidth,300);ctx.save();ctx.translate(sel.x,sel.y);ctx.rotate(sel.rot*Math.PI/180);ctx.translate(sel._ox||0,0);
@@ -474,14 +479,14 @@ function ctor(){
   var cv=h('canvas',{'aria-label':'Холст',role:'img',style:'touch-action:none;cursor:grab'}),msg=h('div',{class:'msg',role:'status'}),panel=h('div',{class:'panel'}),list=h('div',{class:'row'}),page=h('div',{class:'panel'}),
     fb=h('div',{id:'fallback'},[h('p',{text:'Нажмите на картинку и удерживайте, чтобы сохранить её.'}),h('img',{alt:'Готовая картинка'})]),
     capC=h('small',{class:'rv'});
-  var savedC=h('small',{class:'saved',role:'status'}),hist=[],last=JSON.stringify(d),lastT=0,DKEY='br-drafts-1';
+  var savedC=h('small',{class:'saved',role:'status'}),hist=[],redoS=[],last=JSON.stringify(d),lastT=0,DKEY='br-drafts-1';
   function hhmm(){var t=new Date();return ('0'+t.getHours()).slice(-2)+':'+('0'+t.getMinutes()).slice(-2)}
   function save(){try{localStorage.setItem(CKEY,JSON.stringify(d));savedC.textContent='✓ Сохранено в браузере в '+hhmm()}catch(x){savedC.textContent='⚠ Не удалось сохранить: браузер запретил'}}
-  function redraw(){var s=JSON.stringify(d);if(s!==last){if(Date.now()-lastT>500){hist.push(last);if(hist.length>60)hist.shift()}lastT=Date.now();last=s}
+  function redraw(){var s=JSON.stringify(d);if(s!==last){if(Date.now()-lastT>500){hist.push(last);redoS.length=0;if(hist.length>60)hist.shift()}lastT=Date.now();last=s}
     drawDesign(cv,d,sel);save();capC.textContent='PNG · '+d.w+'×'+d.h}
   function undo(){if(!hist.length){msg.textContent='Больше нечего отменять.';return}
-    d=JSON.parse(hist.pop());last=JSON.stringify(d);sel=null;buildPage();buildPanel();buildList();redraw();msg.textContent='Действие отменено.'}
-  function getDrafts(){try{return JSON.parse(localStorage.getItem(DKEY)||'[]')}catch(x){return[]}}
+    redoS.push(last);d=JSON.parse(hist.pop());last=JSON.stringify(d);sel=null;buildPage();buildPanel();buildList();redraw();msg.textContent='Действие отменено.'}
+  function redo(){if(!redoS.length){msg.textContent='Нечего повторять.';return}hist.push(last);d=JSON.parse(redoS.pop());last=JSON.stringify(d);sel=null;buildPage();buildPanel();buildList();redraw();msg.textContent='Действие повторено.'}function getDrafts(){try{return JSON.parse(localStorage.getItem(DKEY)||'[]')}catch(x){return[]}}
   function putDrafts(a){try{localStorage.setItem(DKEY,JSON.stringify(a));return true}catch(x){return false}}
   var dName=h('input',{type:'text',maxlength:'60',placeholder:'Название черновика, например: Викторина 12.11','aria-label':'Название черновика'}),dList=h('div',{});
   var dBox=h('div',{class:'panel'},[h('h2',{text:'Мои афиши'}),
@@ -490,14 +495,14 @@ function ctor(){
   function saveDraft(){var a=getDrafts(),nm=dName.value.trim()||('Афиша '+hhmm());
     a.unshift({id:'d'+Date.now(),name:nm,ts:Date.now(),d:JSON.parse(JSON.stringify(d))});if(a.length>20)a.length=20;
     msg.textContent=putDrafts(a)?'Черновик «'+nm+'» сохранён.':'Не удалось сохранить черновик: браузер запретил хранилище.';dName.value='';buildDrafts()}
-  function buildDrafts(){dList.replaceChildren();var a=getDrafts();if(!a.length){dList.appendChild(h('p',{text:'Черновиков пока нет.'}));return}
+  function buildDrafts(){dList.replaceChildren();var a=getDrafts();if(!a.length){dList.appendChild(h('p',{text:'Черновиков пока нет.'}));dList.appendChild(h('button',{class:'b g',text:'Создать первый черновик',on:{click:function(){saveDraft()}}}));return}
     a.forEach(function(it){dList.appendChild(h('div',{class:'draft'},[h('span',{text:it.name}),
       h('button',{class:'b g',text:'Открыть',on:{click:function(){d=JSON.parse(JSON.stringify(it.d));d.els.forEach(function(e){var n=parseInt(e.id.slice(1),10);if(n>=NID)NID=n+1});sel=null;hist=[];last=JSON.stringify(d);buildPage();buildPanel();buildList();redraw();msg.textContent='Открыт черновик «'+it.name+'».'}}}),
-      h('button',{class:'b g',text:'Удалить',on:{click:function(){putDrafts(getDrafts().filter(function(x){return x.id!==it.id}));buildDrafts()}}})]))})}
+      h('button',{class:'b g',text:'Удалить',on:{click:function(){if(!confirm('Удалить черновик «'+it.name+'»?'))return;putDrafts(getDrafts().filter(function(x){return x.id!==it.id}));buildDrafts()}}})]))})}
   function onKey(ev){var t=ev.target,tag=t&&t.tagName,typing=tag==='TEXTAREA'||(tag==='INPUT'&&/^(text|search)$/.test(t.type)),k=(ev.key||'').toLowerCase();
     if((ev.ctrlKey||ev.metaKey)&&k==='z'&&!ev.shiftKey){if(typing)return;ev.preventDefault();undo()}
-    else if((ev.ctrlKey||ev.metaKey)&&k==='s'){ev.preventDefault();saveDraft()}}
-  leaveCtor();KEYH=onKey;document.addEventListener('keydown',onKey);
+    else if((ev.ctrlKey||ev.metaKey)&&(k==='y'||(k==='z'&&ev.shiftKey))){if(typing)return;ev.preventDefault();redo()}else if(k==='escape'&&sel&&!typing){sel=null;buildPanel();buildList();redraw()}else if((ev.ctrlKey||ev.metaKey)&&k==='s'){ev.preventDefault();saveDraft()}}
+  leaveCtor();repaint=function(){};KEYH=onKey;document.addEventListener('keydown',onKey);
   function pick(e){sel=e;buildPanel();buildList();redraw()}
   function ctrl(label,input,extra){return h('div',{},[h('label',{text:label}),input].concat(extra||[]))}
   function sld(label,o,k,min,max,step,cb){var v=h('span',{class:'rv',text:' '+Math.round(o[k]*100)/100}),r=h('input',{type:'range',min:String(min),max:String(max),step:String(step||1),value:String(o[k]),'aria-label':label});
@@ -513,7 +518,7 @@ function ctor(){
       k=[ctrl('Текст',ta),ctrl('Шрифт',fs),sld('Размер шрифта',e,'size',10,400,2),sld('Ширина блока',e,'w',80,d.w,10),col('Цвет',e,'color'),opt('Начертание',e,'wt',[[500,'Обычный'],[800,'Жирный']]),opt('Выравнивание',e,'al',[['left','Слева'],['center','По центру'],['right','Справа']]),chk('Курсив',e,'it'),chk('ЗАГЛАВНЫЕ',e,'up'),chk('Тень',e,'sh')]}
     else if(e.type==='rect')k=[sld('Ширина',e,'w',20,d.w,5),sld('Высота',e,'h',20,d.h,5),sld('Скругление',e,'r',0,300,2),col('Цвет',e,'fill'),chk('Градиент',e,'grad'),col('Цвет 2 (градиент)',e,'fill2'),sld('Обводка',e,'sw',0,30,1),col('Цвет обводки',e,'stroke')];
     else if(e.type==='img')k=[fileBtn(e),sld('Ширина',e,'w',40,d.w,5),sld('Высота',e,'h',40,d.h,5),sld('Скругление',e,'r',0,300,2),chk('Белая рамка',e,'fr')];
-    else if(e.type==='deco')k=[sld('Размер',e,'s',40,1200,10),sld('Размытие (глубина)',e,'blur',0,12,1)].concat(e.kind==='gift'?[col('Цвет коробки',e,'c1'),col('Цвет ленты',e,'c2')]:e.kind==='pen'?[col('Цвет',e,'c1')]:(e.kind==='plus'||EXTRA[e.kind])?[col('Цвет 1',e,'c1'),col('Цвет 2',e,'c2')]:[]);
+    else if(e.type==='deco')k=[sld('Размер',e,'s',40,1200,10),sld('Размытие (глубина)',e,'blur',0,12,1)].concat(e.kind==='gift'?[col('Цвет коробки',e,'c1'),col('Цвет ленты',e,'c2')]:e.kind==='pen'?[col('Цвет',e,'c1')]:(/^(curves|wave|swoosh)$/.test(e.kind))?[col('Цвет линий',e,'c1'),sld('Толщина линии',e,'lw',1,16,.5)]:(e.kind==='plus'||EXTRA[e.kind])?[col('Цвет 1',e,'c1'),col('Цвет 2',e,'c2')]:[]);
     else k=[sld('Размер',e,'s',20,200,2),col('Цвет',e,'color')];
     panel.appendChild(h('h2',{text:{text:'Текст',rect:'Плашка',img:'Фото',deco:'Украшение',brand:'BLACK RUSSIA'}[e.type]}));
     k=[sld('Положение по горизонтали',e,'x',0,d.w,1),sld('Положение по вертикали',e,'y',0,d.h,1),sld('Поворот',e,'rot',-180,180,1)].concat(k);k.forEach(function(x){panel.appendChild(x)});
@@ -523,7 +528,7 @@ function ctor(){
       h('button',{class:'b g',text:'Удалить',on:{click:function(){d.els.splice(d.els.indexOf(e),1);pick(null)}}})]))}
   function nm(e){return {text:'Текст',rect:'Плашка',img:'Фото',deco:'Украшение',brand:'Бренд'}[e.type]+(e.type==='text'?': '+e.text.slice(0,12):e.type==='deco'?': '+DECO.filter(function(x){return x[0]===e.kind})[0][1]:'')}
   function buildList(){list.replaceChildren();d.els.forEach(function(e,i){list.appendChild(h('button',{class:'b'+(e===sel?'':' g'),style:'min-height:38px;padding:6px 12px;font-size:14px',text:(i+1)+'. '+nm(e),on:{click:function(){pick(e)}}}))})}
-  function add(e){if(e.type!=='brand'&&!(e.type==='text'&&e.text==='Surgut')){var o=(d.els.length%6)*36;e.x+=o;e.y+=o}d.els.push(e);pick(e)}
+  function add(e){if(e.type!=='brand'&&!(e.type==='text'&&e.text==='Surgut')){var o=(d.els.length%6)*36;e.x+=o;e.y+=o}if(e.type==='deco'&&/^(curves|wave|swoosh)$/.test(e.kind))d.els.unshift(e);else d.els.push(e);pick(e)}
   var decoSel=h('select',{'aria-label':'Украшение'},DECO.map(function(x){return h('option',{value:x[0],text:x[1]})}));
   var addRow=h('div',{class:'row'},[
     h('button',{class:'b',text:'+ Текст',on:{click:function(){add(mkEl('text',d))}}}),
@@ -531,7 +536,7 @@ function ctor(){
     h('button',{class:'b',text:'+ Плашка',on:{click:function(){add(mkEl('rect',d))}}}),
     h('button',{class:'b',text:'+ BLACK RUSSIA',on:{click:function(){add(mkEl('brand',d,{y:d.h-70}))}}}),
     h('button',{class:'b',text:'+ Сервер',on:{click:function(){var r=mkEl('rect',d,{w:260,h:70,r:35,x:d.w-190,y:d.h-60,fill:'#a56bff',fill2:'#7a3fe0',stroke:'#ffffff',sw:3});d.els.push(r);add(mkEl('text',d,{text:'Surgut',size:46,w:240,x:r.x,y:r.y}))}}})]);
-  var decoRow=h('div',{class:'row'},[decoSel,h('button',{class:'b',text:'+ Добавить украшение',on:{click:function(){var k=decoSel.value,cl={gift:['#7d3bf0','#f0b840'],pen:['#8a4fd0','#fff'],plus:['#c9a3ff','#7c4fe0']}[k]||EXD[k]||['#fff','#fff'];add(mkEl('deco',d,{kind:k,c1:cl[0],c2:cl[1],s:k==='pen'?300:k==='sheet'?420:300}))}}})]);
+  var decoRow=h('div',{class:'row'},[decoSel,h('button',{class:'b',text:'+ Добавить украшение',on:{click:function(){var k=decoSel.value,cl={gift:['#7d3bf0','#f0b840'],pen:['#8a4fd0','#fff'],plus:['#c9a3ff','#7c4fe0']}[k]||EXD[k]||['#fff','#fff'];add(mkEl('deco',d,{kind:k,c1:cl[0],c2:cl[1],lw:3,s:/^(curves|wave|swoosh)$/.test(k)?1200:k==='pen'?300:k==='sheet'?420:300}))}}})]);
   function buildPage(){page.replaceChildren();
     var sz=h('select',{'aria-label':'Размер холста'},SIZES.map(function(s,i){return h('option',{value:i,text:s[0]})}));sz.value=String(SIZES.findIndex(function(s){return s[1]===d.w&&s[2]===d.h}));
     sz.addEventListener('change',function(){var s=SIZES[+sz.value];d.w=s[1];d.h=s[2];buildPage();redraw()});
@@ -562,7 +567,7 @@ function ctor(){
   var clr=h('button',{class:'b g',text:'Начать заново',on:{click:function(){if(confirm('Очистить холст и начать заново?')){d=newDesign();sel=null;IMGS={};BGI=null;buildPage();buildPanel();buildList();redraw()}}}});
   app.replaceChildren(h('button',{class:'back',text:'← Все шаблоны',on:{click:home}}),h('h1',{text:'Конструктор'}),
     h('p',{text:'Соберите пост с нуля: добавляйте текст, фото, плашки и украшения. Перетаскивайте объекты прямо на картинке. Макет сохраняется автоматически — можно вернуться позже.'}),
-    cv,h('div',{class:'row'},[dl,h('button',{class:'b g',text:'Отменить (Ctrl+Z)',on:{click:undo}}),clr,capC]),savedC,msg,fb,dBox,h('h2',{text:'Добавить'}),addRow,decoRow,h('h2',{text:'Объекты'}),list,panel,page);
+    hintBox(),cv,h('div',{class:'row'},[dl,h('button',{class:'b g',text:'Отменить (Ctrl+Z)',on:{click:undo}}),h('button',{class:'b g',text:'Повторить (Ctrl+Y)',on:{click:redo}}),clr,capC]),savedC,msg,fb,dBox,h('h2',{text:'Добавить'}),addRow,decoRow,h('h2',{text:'Объекты'}),list,panel,page);
   buildDrafts();buildPage();buildPanel();buildList();redraw();FONTS.slice(0,4).forEach(function(f){loadFont(f).then(redraw)});
   var used={};d.els.forEach(function(e){if(e.font)used[e.font]=1});Object.keys(used).forEach(function(f){loadFont(f).then(redraw)});
   window.scrollTo(0,0)}
@@ -582,16 +587,18 @@ function themeBtn(){var cur=getTheme();function lab(){return THEMES.filter(funct
 function copyText(t,ok,fail){function legacy(){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var r=false;try{r=document.execCommand('copy')}catch(e){}a.remove();r?ok():fail()}
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,legacy);else legacy()}
 function ticker(){var t='ВИКТОРИНЫ ◆ БИТВЫ ◆ ОПРОСЫ ◆ КОНКУРСЫ ◆ ФАКТЫ ◆ УГАДАЙ ◆ BLACK RUSSIA ◆ ';t=t+t+t;return h('div',{class:'ticker','aria-hidden':'true'},[h('div',{class:'tk'},[h('span',{text:t}),h('span',{text:t})])])}
+function hintBox(){var k='br-hint',s=null;try{s=localStorage.getItem(k)}catch(e){}if(s)return null;var b=h('div',{class:'hint',role:'note'},[h('span',{text:'Потяните объект, чтобы двигать. Голубой квадрат — размер.'}),h('button',{class:'b g',style:'min-height:32px;padding:4px 10px;font-size:13px',text:'Понятно',on:{click:function(){try{localStorage.setItem(k,'1')}catch(e){}b.remove()}}})]);return b}
+function contBtn(){var id=null;try{id=localStorage.getItem('br-last')}catch(e){}var t=DATA.filter(function(x){return x.id===id})[0];if(!t)return null;return h('button',{class:'b g',style:'margin-top:12px',text:'Продолжить: '+t.name,on:{click:function(){use(t)}}})}
 function sep(){return h('div',{class:'sep',role:'separator'},[h('i')])}
-function initReveal(){var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;if(reduce||!('IntersectionObserver' in window))return;
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.06,rootMargin:'0px 0px -4% 0px'});
+var IO=null;function initReveal(){if(IO){IO.disconnect();IO=null}var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;if(reduce||!('IntersectionObserver' in window))return;
+  var io=IO=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.06,rootMargin:'0px 0px -4% 0px'});
   [].forEach.call(app.querySelectorAll('.rvl'),function(el){el.classList.add('pre');io.observe(el)})}
 function vk(text){return h('a',{href:CONTACT_URL,target:'_blank',rel:'noopener noreferrer',text:text})}
-function readImg(file,ok,fail){var r=new FileReader();r.onerror=function(){if(fail)fail()};r.onload=function(){var i=new Image();i.onload=function(){ok(i)};i.onerror=function(){if(fail)fail()};i.src=r.result};r.readAsDataURL(file)}
+function readImg(file,ok,fail){var r=new FileReader();r.onerror=function(){if(fail)fail()};r.onload=function(){var i=new Image();i.onload=function(){var m=Math.max(i.width,i.height);if(m<=2000){ok(i);return}var q=2000/m,c=document.createElement('canvas');c.width=Math.round(i.width*q);c.height=Math.round(i.height*q);c.getContext('2d').drawImage(i,0,0,c.width,c.height);ok(c)};i.onerror=function(){if(fail)fail()};i.src=r.result};r.readAsDataURL(file)}
 function loadFont(f){if(!document.fonts||!document.fonts.load)return Promise.resolve();return Promise.all([300,500,700,800].map(function(w){return document.fonts.load(w+' 40px "'+f+'"','Аб')})).catch(function(){})}
 function empty(){return{val:{},fnt:{},sz:{},im:{}}}
 function drawThumb(tc,v){draw(BIG,v,empty());tc.width=480;tc.height=Math.round(480*v.h/v.w);tc.getContext('2d').drawImage(BIG,0,0,tc.width,tc.height)}
-function home(){leaveCtor();thumbs=[];
+function home(){leaveCtor();repaint=function(){};thumbs=[];
   var si=h('input',{type:'search',class:'search',placeholder:'Найти шаблон: викторина, угадай, опрос…','aria-label':'Поиск шаблонов'});
   var fchips=h('div',{class:'fchips',role:'group','aria-label':'Категории шаблонов'});
   var grid=h('div',{class:'grid'});
@@ -609,10 +616,10 @@ function home(){leaveCtor();thumbs=[];
         h('i',{class:'feat',style:'font-style:normal',text:t.feat})]);
       grid.appendChild(card);
       (function(c,v){setTimeout(function(){try{drawThumb(c,v)}catch(e){}},30)})(tc,t.variants[0])});
-    if(!n)grid.appendChild(h('div',{class:'empty'},[h('p',{text:'Такого шаблона пока нет. '}),vk('Напишите во ВКонтакте'),' — сделаю шаблон под вас.']))}
+    if(!n)grid.appendChild(h('div',{class:'empty'},[h('p',{text:'Такого шаблона пока нет. '}),h('button',{class:'b g',text:'Сбросить фильтры',on:{click:function(){si.value='';cur='all';[].forEach.call(fchips.children,function(b,i){b.classList.toggle('on',i===0)});applyFilter()}}}),vk('Напишите во ВКонтакте'),' — сделаю шаблон под вас.']))}
   si.addEventListener('input',applyFilter);
   CATS.forEach(function(c,i){fchips.appendChild(h('button',{class:i===0?'on':'',text:c[1],on:{click:function(){
-    cur=c[0];[].forEach.call(fchips.children,function(b){b.classList.remove('on')});this.classList.add('on');applyFilter()}}}))});
+    cur=c[0];if(c[0]==='all')si.value='';[].forEach.call(fchips.children,function(b){b.classList.remove('on')});this.classList.add('on');applyFilter()}}}))});
   var steps=h('div',{class:'steps rvl'},[
     h('div',{class:'step','data-n':'01'},[h('b',{text:'1. Выберите шаблон'}),h('p',{text:'Или соберите пост с нуля в конструкторе.'})]),
     h('div',{class:'step','data-n':'02'},[h('b',{text:'2. Поменяйте текст и фото'}),h('p',{text:'Загрузите свои картинки, выберите из встроенных шрифтов и размеров.'})]),
@@ -634,41 +641,41 @@ function home(){leaveCtor();thumbs=[];
       h('li',{text:'Указывать автора необязательно, но будет приятно.'}),
       h('li',{text:'Нельзя перепродавать шаблоны и конструктор или выдавать их за свои.'}),
       h('li',{},['Коммерческое использование согласуйте с автором: ',vk('написать во ВКонтакте'),'.'])])]);
-  var about=h('section',{class:'panel rvl',id:'about','aria-labelledby':'ab-h'},[h('h2',{id:'ab-h',text:'Об авторе'}),
+  var about=h('section',{class:'panel rvl',id:'about','aria-labelledby':'ab-h'},[h('h2',{id:'ab-h',text:'Об авторе'}),h('div',{class:'av','aria-hidden':'true',text:'BR'}),
     h('p',{},['Сайт делается для сообщества Black Russia: шаблоны, конструктор и обновления. Есть вопрос, баг или идея, пишите во ВКонтакте: ',vk('vk.com/id676733241'),'.'])]);
   /* пример готовой афиши */
-  var exCv=h('canvas',{role:'img','aria-label':'Пример готовой афиши: викторина на знание сервера с призом'});
-  var example=h('section',{class:'example stripes rvl','aria-labelledby':'ex-h'},[h('h2',{id:'ex-h',text:'Пример готовой афиши'}),exCv,
+  var exCv2=h('canvas',{role:'img','aria-label':'Пример: опрос'}),exCv3=h('canvas',{role:'img','aria-label':'Пример: А вы знали'}),exCv=h('canvas',{role:'img','aria-label':'Пример готовой афиши: викторина на знание сервера с призом'});
+  var example=h('section',{class:'example stripes rvl','aria-labelledby':'ex-h'},[h('h2',{id:'ex-h',text:'Пример готовой афиши'}),exCv,exCv2,exCv3,
     h('p',{text:'Так выглядит результат: шаблон «Викторина», в котором заменили заголовок, вопрос и приз. Скачивается как PNG.'})]);
-  var faq=h('section',{class:'panel hud stripes rvl','aria-labelledby':'faq-h'},[h('h2',{id:'faq-h',text:'Частые вопросы'}),
+  var news=h('section',{class:'panel stripes rvl','aria-labelledby':'nw-h'},[h('h2',{id:'nw-h',text:'Что нового'}),h('ul',{class:'rl'},[h('li',{text:'Конструктор: 11 новых украшений и кривые линии для фона.'}),h('li',{text:'Шаблоны: выбор формата, JPEG, «Скачать все варианты», копирование текста.'}),h('li',{text:'Конструктор: кнопка «Повторить» и Esc для снятия выделения.'}),h('li',{text:'Главная: кнопка «Продолжить» с последним шаблоном.'})])]);var faq=h('section',{class:'panel hud stripes rvl','aria-labelledby':'faq-h'},[h('h2',{id:'faq-h',text:'Частые вопросы'}),
     h('details',{},[h('summary',{text:'Это бесплатно?'}),h('p',{text:'Да, пользоваться шаблонами и конструктором можно бесплатно: без регистрации и оплаты.'})]),
-    h('details',{},[h('summary',{text:'Какой формат у готовой афиши?'}),h('p',{text:'PNG. Шаблоны скачиваются в своём размере (чаще всего 1920×1080, 16:9). В конструкторе можно выбрать: 16:9 (1920×1080), квадрат (1080×1080), 4:5 (1080×1350), сторис (1080×1920) и 1781×1057.'})]),
+    h('details',{},[h('summary',{text:'Какой формат у готовой афиши?'}),h('p',{text:'PNG. Шаблоны скачиваются в своём размере (чаще всего 1920×1080, 16:9). В конструкторе можно выбрать: 16:9 (1920×1080), квадрат (1080×1080), 4:5 (1080×1350), сторис (1080×1920) и 1781×1057 (размер шаблонов «Викторина» и «Интересный факт»).'})]),
     h('details',{},[h('summary',{text:'Можно ли использовать свои шрифты?'}),h('p',{text:'Свои шрифты загрузить нельзя, но доступно 12 встроенных шрифтов, включая Oswald, Russo One и Bebas Neue.'})]),
     h('details',{},[h('summary',{text:'Сохраняется ли макет?'}),h('p',{text:'Да. Макет конструктора автоматически сохраняется в браузере и будет на месте при следующем открытии страницы.'})]),
-    h('details',{},[h('summary',{text:'Что делать, если картинка не скачивается?'}),h('p',{text:'На мобильных браузерах нажмите на готовую картинку под кнопкой скачивания и удерживайте её, чтобы сохранить в галерею.'})]),
+    h('details',{},[h('summary',{text:'Работает ли на телефоне?'}),h('p',{text:'Да. Конструктор открывается в мобильном браузере: объекты двигаются пальцем, размер меняется голубым квадратом в углу.'})]),h('details',{},[h('summary',{text:'Почему картинка скачивается не туда?'}),h('p',{text:'Браузер сохраняет файл в свою папку загрузок. На телефоне посмотрите «Файлы» или «Загрузки», а если файла нет, нажмите на картинку под кнопкой и удерживайте её.'})]),h('details',{},[h('summary',{text:'Что делать, если картинка не скачивается?'}),h('p',{text:'На мобильных браузерах нажмите на готовую картинку под кнопкой скачивания и удерживайте её, чтобы сохранить в галерею.'})]),
     h('details',{},[h('summary',{text:'Куда писать, если что-то не работает или есть идея шаблона?'}),h('p',{},['Пишите во ВКонтакте: ',vk('vk.com/id676733241'),'. Принимаю сообщения об ошибках, вопросы и предложения новых шаблонов.'])]),
-    h('details',{},[h('summary',{text:'Можно ли использовать афиши в коммерческих целях?'}),h('p',{},['Шаблоны сделаны для сообществ игроков Black Russia. Если планируете использовать афиши в коммерческих целях, уточните условия у автора: ',vk('написать во ВКонтакте'),'.'])])]);
+    h('details',{},[h('summary',{text:'Можно ли использовать афиши в коммерческих целях?'}),h('p',{},['Шаблоны сделаны для сообществ игроков Black Russia. Для игровых сообществ — да, бесплатно. Коммерческое использование (реклама, продажа, платные услуги) — только по согласованию с автором: ',vk('написать во ВКонтакте'),'.'])])]);
   var ft=h('footer',{class:'rvl'},[
     h('h2',{text:'Связь и сообщество'}),
     h('p',{},['ВКонтакте: ',vk('vk.com/id676733241'),' — вопросы, баги, предложения шаблонов.']),
     h('p',{text:'Экспорт: PNG · Форматы: 16:9, квадрат, 4:5, сторис · Платформы: VK, Telegram, Discord'}),
-    h('p',{},['Сделано для сообщества Black Russia · ',h('a',{href:'#rules',text:'Правила использования',on:{click:function(e){e.preventDefault();rules.scrollIntoView({behavior:'smooth'})}}})]),h('div',{class:'serial','aria-hidden':'true'},[h('span',{class:'stars',text:'★★★★★'}),h('span',{class:'bar'}),h('span',{text:'AFISHI-BR / 2026'})])]);
+    h('p',{},['Сделано для сообщества Black Russia · ',h('a',{href:'#rules',text:'Правила использования'})]),h('div',{class:'serial','aria-hidden':'true'},[h('span',{class:'stars',text:'★★★★★'}),h('span',{class:'bar'}),h('span',{text:'AFISHI-BR / 2026'})])]);
   /* порядок: заголовок → как это работает → шаблоны → «Создать с нуля» → пример → FAQ → футер */
   app.replaceChildren(
     h('div',{class:'tape','aria-hidden':'true'}),
     h('div',{class:'hud'},[h('div',{class:'hudrow','aria-hidden':'true'},[h('span',{class:'tag',text:'BLACK RUSSIA // КОНСТРУКТОР АФИШ'}),h('span',{class:'plate'},[h('b',{text:'А 777 ВР'}),h('span',{class:'reg'},[h('span',{text:'86'}),h('span',{text:'RUS'})])])]),h('div',{class:'top'},[h('h1',{text:'Афиши Black Russia'}),themeBtn()]),
     h('p',{text:'Готовые шаблоны постов для вашего сервера: викторины, битвы, опросы и конкурсы. Поменяйте текст, загрузите картинки и скачайте PNG за минуту.'})]),
-    ticker(),steps,sep(),
+    ticker(),contBtn(),steps,sep(),
     h('div',{class:'hud rvl'},[h('h2',{text:'Шаблоны'}),si,fchips,grid]),
-    promo,suggest,example,sep(),faq,rules,about,h('div',{class:'tape','aria-hidden':'true',style:'margin-top:30px'}),ft);
+    promo,suggest,example,sep(),news,faq,rules,about,h('div',{class:'tape','aria-hidden':'true',style:'margin-top:30px'}),ft);
   initReveal();
-  setTimeout(function(){try{drawThumb(exCv,DATA[0].variants[0])}catch(e){}},30);
+  setTimeout(function(){try{drawThumb(exCv,DATA[0].variants[0])}catch(e){}},30);setTimeout(function(){try{drawThumb(exCv2,DATA[5].variants[0]);drawThumb(exCv3,DATA[7].variants[0])}catch(e){}},60);
   applyFilter();window.scrollTo(0,0)}
-function use(t){leaveCtor();
+function use(t){leaveCtor();try{localStorage.setItem('br-last',t.id)}catch(e){}
   var v=t.variants[0],st=empty(),cv=h('canvas',{'aria-label':'Предпросмотр',role:'img'}),msg=h('div',{class:'msg',role:'status'}),
     fb=h('div',{id:'fallback'},[h('p',{text:'Нажмите на картинку и удерживайте, чтобы сохранить её.'}),h('img',{alt:'Готовая афиша'})]),form=h('div',{class:'panel'}),chips=h('div',{class:'row'}),
     cap=h('small',{class:'rv'});
-  repaint=function(){draw(cv,v,st);cap.textContent='PNG · '+v.w+'×'+v.h};
+  var SRC=document.createElement('canvas'),FMT=null;function comp(){var c=cv.getContext('2d');if(!FMT){cv.width=SRC.width;cv.height=SRC.height;c.drawImage(SRC,0,0);return}var W=FMT[0],H=FMT[1],r=Math.max(W/SRC.width,H/SRC.height),k=Math.min(W/SRC.width,H/SRC.height);cv.width=W;cv.height=H;c=cv.getContext('2d');c.filter='blur(30px)';c.drawImage(SRC,(W-SRC.width*r)/2,(H-SRC.height*r)/2,SRC.width*r,SRC.height*r);c.filter='none';c.drawImage(SRC,(W-SRC.width*k)/2,(H-SRC.height*k)/2,SRC.width*k,SRC.height*k)}repaint=function(){draw(SRC,v,st);comp();cap.textContent='PNG · '+cv.width+'×'+cv.height};
   function buildForm(){form.replaceChildren();
     v.layers.forEach(function(l){var id='f_'+l.k;
       if(l.t==='img'){var inp=h('input',{type:'file',accept:'image/*',id:id});
@@ -692,10 +699,10 @@ function use(t){leaveCtor();
       if(!b){msg.textContent='Сохраните картинку ниже долгим нажатием.';return}
       var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='afisha.png';document.body.appendChild(a);a.click();a.remove();
       setTimeout(function(){URL.revokeObjectURL(u)},4000);msg.textContent='Если файл не сохранился, сохраните картинку ниже долгим нажатием.'},'image/png')}}});
-  app.replaceChildren(h('button',{class:'back',text:'← Все шаблоны',on:{click:home}}),h('h1',{text:t.title}),h('p',{text:t.desc}),chips,cv,h('div',{class:'row'},[dl,cap]),msg,fb,form);
-  buildChips();buildForm();repaint();window.scrollTo(0,0);
+  app.replaceChildren(h('button',{class:'back',text:'← Все шаблоны',on:{click:home}}),h('h1',{text:t.title}),h('p',{text:t.desc}),chips,cv,h('div',{class:'row'},[dl,h('button',{class:'b g',text:'Вернуть текст к исходному',on:{click:function(){st.val={};st.fnt={};st.sz={};buildForm();repaint();msg.textContent='Текст возвращён к исходному.'}}}),h('select',{'aria-label':'Формат картинки',on:{change:function(){var q=this.value;FMT=q==='o'?null:[SIZES[+q][1],SIZES[+q][2]];repaint()}}},[['o','Формат: как в шаблоне'],['0','16:9 · 1920×1080'],['1','Квадрат · 1080×1080'],['2','4:5 · 1080×1350'],['3','Сторис · 1080×1920']].map(function(a){return h('option',{value:a[0],text:a[1]})})),h('button',{class:'b g',text:'Скопировать текст',on:{click:function(){copyText(v.layers.filter(function(l){return l.t==='text'&&l.k!=='srv'}).map(function(l){var x=st.val[l.k];return x!=null?x:l.def}).join(String.fromCharCode(10)),function(){msg.textContent='Текст афиши скопирован.'},function(){msg.textContent='Не удалось скопировать.'})}}}),h('button',{class:'b g',text:'Скачать JPEG (легче)',on:{click:function(){cv.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='afisha.jpg';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);msg.textContent='JPEG: '+Math.round(b.size/1024)+' КБ.'},'image/jpeg',.88)}}}),t.variants.length>1?h('button',{class:'b g',text:'Скачать все варианты',on:{click:function(){t.variants.forEach(function(x,i){setTimeout(function(){var c=document.createElement('canvas');draw(c,x,st);c.toBlob(function(b){var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='afisha-'+(i+1)+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);if(i===t.variants.length-1)repaint()})},i*600)});msg.textContent='Скачиваю файлов: '+t.variants.length}}}):null,cap]),msg,fb,form,h('div',{class:'dock'},[h('button',{class:'b',text:'Скачать PNG',on:{click:function(){dl.click()}}})]));
+  buildChips();buildForm();repaint();window.scrollTo(0,0);var f0=form.querySelector('input[type=text],textarea');if(f0&&!('ontouchstart' in window))f0.focus({preventScroll:true});
   var used={};t.variants.forEach(function(x){x.layers.forEach(function(l){if(l.t==='text')used[l.font]=1})});Object.keys(used).forEach(function(f){loadFont(f).then(repaint)})}
-applyTheme(getTheme());
+try{var fc=document.createElement('canvas');fc.width=fc.height=32;var fx=fc.getContext('2d');fx.fillStyle='#8a3fd1';fx.fillRect(0,0,32,32);fx.fillStyle='#fff';fx.font='800 15px Arial';fx.textAlign='center';fx.textBaseline='middle';fx.fillText('BR',16,17);var fl=document.createElement('link');fl.rel='icon';fl.type='image/png';fl.sizes='32x32';fl.href=fc.toDataURL('image/png');document.head.appendChild(fl)}catch(e){}applyTheme(getTheme());
 home();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){thumbs.forEach(function(p){try{drawThumb(p[0],p[1])}catch(e){}})});
 ['Oswald','Onest'].forEach(function(f){loadFont(f).then(function(){thumbs.forEach(function(p){try{drawThumb(p[0],p[1])}catch(e){}});repaint()})});
