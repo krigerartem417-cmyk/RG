@@ -276,6 +276,55 @@ function repeatV(){var W=1576,H=957;return{name:'Красный',w:W,h:H,paint:f
   layers:[T('l1','Заголовок','Повтори фото',430,58,715,95),T('l2','Подзаголовок','И получи приз',520,150,535,64),IM('a','Фото',350,279,880,510,46),
    T('prize','Приз','100.000 ИВ',605,812,350,62),T('srv','Сервер','Surgut',725,911,125,38)]}}
 
+/* ===== ШАБЛОНЫ, ЧАСТЬ 2 ===== */
+function gb(a,b,g){return function(W,H){ctx.fillStyle=lin(0,0,W,H,[[0,a],[1,b]]);ctx.fillRect(0,0,W,H);if(g)glow(W*.5,H*.5,Math.max(W,H)*.7,g)}}
+function mk2(n,W,H,o){var sy=o.top?20:H-76;return{name:n,w:W,h:H,paint:function(){o.bg(W,H);if(o.pa)o.pa(W,H);
+  brand(40,H-48,o.bs||40,o.bc);srvPill(W-230,sy,190,52,o.s1||'#a14fb5',o.s2||'#6a2a78','rgba(255,255,255,.4)')},
+  layers:o.L.concat([T('srv','Сервер','Surgut',W-214,sy+4,158,44)])}}
+function dv(id){return DATA.filter(function(d){return d.id===id})[0]}
+var PL=['rgba(255,255,255,.18)','rgba(255,255,255,.5)'];
+
+/* 3 фото: опрос или оценка 0-3 / 4-6 / 7-9 */
+function threeV(n,a,b,ac,title,caps){var X=caps?[[65,380,585,335],[672,375,590,340],[1288,378,565,340]]:[[150,380,480,370],[710,380,495,370],[1290,380,480,370]];
+  var L=[T('t','Заголовок',title,260,70,1400,170,{rich:ac})];
+  X.forEach(function(x,i){L.push(IM('p'+(i+1),'Фото '+(i+1),x[0],x[1],x[2],x[3],30))});
+  if(caps)caps.forEach(function(c,i){L.push(T('c'+(i+1),'Подпись '+(i+1),c,X[i][0]+40,X[i][1]+X[i][3]+10,X[i][2]-80,110,{up:false}))});
+  else L.push(T('p','Метка','Опрос',1490,935,380,100));
+  return mk2(n,1920,1080,{bg:gb(a,b),top:true,pa:function(){if(!caps)panel(1470,920,420,130,30,PL[0],0,0,PL[1])},L:L})}
+
+/* ребус */
+function rebusV(){return mk2('Розовый',1920,1080,{bg:gb('#c01a6a','#6a1040'),top:true,
+  pa:function(){plus(765,580,.4,0,'#fff','#ddd');plus(1215,580,.4,0,'#fff','#ddd');panel(1420,920,470,130,30,PL[0],0,0,PL[1])},
+  L:[T('t','Заголовок','Разгадайте [[ребус]]',360,190,1200,140,{rich:'#ff2a8a'}),IM('a','Картинка 1',415,480,270,200,16),IM('b','Картинка 2',845,480,270,200,16),IM('c','Картинка 3',1300,480,270,200,16),T('p','Метка','Конкурс',1440,935,430,100)]})}
+
+/* мнение об администраторе — красный квадрат */
+function opRed(){return mk2('Красный квадрат',1080,1080,{bg:gb('#7a0a12','#c4222c'),
+  pa:function(W,H){panel(100,338,880,243,40,'rgba(120,8,18,.85)');ctx.save();ctx.font='800 460px Onest, Arial Black, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#c01018';ctx.shadowColor='rgba(0,0,0,.4)';ctx.shadowBlur=30;ctx.fillText('?',540,830);ctx.restore()},
+  L:[T('t','Заголовок','Мнение об администраторе',100,70,880,240),IM('a','Фото',125,358,205,205,36),T('n','Ник','Nickname',370,380,590,160,{up:false,font:'Oswald'})]})}
+
+/* история ГА (портрет) */
+function histV(){return mk2('Красный',1080,1370,{bg:gb('#c01018','#e83040','rgba(255,255,255,.2)'),
+  L:[IM('a','Фото',150,45,780,780,0),T('t','Заголовок','История ГА 86 сервера Surgut',60,880,960,130,{font:'Oswald',wt:500,it:false})]})}
+
+/* «А вы знали» со скриншотом */
+function knewShot(){return mk2('Со скриншотом',1280,970,{bg:gb('#3a2ad8','#5a2ad0'),s1:'#9a4fe0',s2:'#5a2ad0',
+  pa:function(){var f=lin(0,0,1280,0,[[0,'#a14fb5'],[1,'#591c63']]);panel(322,89,690,153,0,f,-.25);panel(288,775,700,160,0,f,-.25)},
+  L:[T('t','Заголовок','А вы знали?',360,100,610,130),IM('a','Скриншот',355,284,585,437,8),T('b','Текст','Новый движок был добавлен в 2023 году',310,785,660,140)]})}
+
+/* питомец админа (красный) */
+function petRed(){return mk2('Красный',1280,956,{bg:gb('#4a1418','#4a1418','rgba(160,20,30,.3)'),
+  pa:function(){panel(280,70,720,170,24,'#a01820');panel(350,780,580,100,24,'#a01820');ctx.strokeStyle='#ff2a2a';ctx.lineWidth=6;ctx.shadowColor='#ff2a2a';ctx.shadowBlur=24;rr(305,285,670,445,12);ctx.stroke();ctx.shadowColor='transparent'},
+  L:[T('t','Заголовок','Домашний питомец администратора Nickname',300,85,680,140),IM('a','Фото',318,298,644,420,10),T('b','Кличка','Кличка — Имя',370,792,540,76)]})}
+
+/* критерии набора (портрет) */
+function critV(){var R=[['15','Необходимый возраст'],['8','Необходимый уровень'],['✓','Привязки к ВК и ТГ'],['✓','Знание игрового мода']],L=[T('t','Заголовок','Подай заявку на пост агента поддержки',60,100,960,220),T('h','Подзаголовок','Критерии:',60,400,700,140,{al:'left'})];
+  R.forEach(function(r,i){var y=560+i*150;L.push(T('n'+i,'Значок '+(i+1),r[0],62,y+8,92,92,{up:false}),T('r'+i,'Критерий '+(i+1),r[1],190,y+10,830,90,{al:'left'}))});
+  return mk2('Розовый',1080,1456,{bg:gb('#8a1ab0','#f030d0'),
+  pa:function(){for(var i=0;i<4;i++){var y=560+i*150;pill(50,y,980,110,'rgba(230,80,255,.7)','rgba(255,255,255,.35)',2);pill(60,y+8,94,94,'rgba(255,255,255,.3)')}},L:L})}
+
+/* новости админ-состава */
+function adminNews(){return mk2('Розовый',1080,1080,{bg:gb('#ff6ee0','#ff5fd0','rgba(255,255,255,.25)'),L:[T('t','Заголовок','Новости админ-состава',120,230,840,600,{color:'rgba(255,255,255,.92)'})]})}
+
 function opinionV(name,p){var W=p.w,H=786;return{name:name,w:W,h:H,paint:function(){
   ctx.fillStyle=p.bg(W,H);ctx.fillRect(0,0,W,H);glow(W*.5,H*.5,W*.8,p.glow);
   lines([[0,520,200,500,400,520,W,700],[W*.7,60,W*.9,120,W*.95,300,W*.8,500]],'rgba(255,255,255,.18)',2);
@@ -338,6 +387,21 @@ var DATA=[
   knewV('Оранжевый',{h:1348,bg:orange,s1:'#d4570a',s2:'#ff7a10',st:'rgba(255,255,255,.5)',ty:135,th:180,tfill:function(){return lin(80,0,915,0,[[0,'#c85300'],[.5,'#ff6a00'],[1,'#c04e00']])},bx:75,by:520,bw:845,bh:590,bfill:function(){return lin(75,520,920,1110,[[0,'#c85300'],[.5,'#ff6a00'],[1,'#c04e00']])},tf:{font:'Onest',wt:800},bf:{font:'Montserrat',wt:700,up:false},body:'Интерьер СМИ не обновлялся с момента выхода игры.'})]},
  {id:'fact',name:'Интересный факт',title:'Факт — Интересный факт',feat:'со скриншотом',desc:'Пост-факт со скриншотом и выделенной строкой',tags:'quiz',variants:[factV()]}
 ];
+
+/* дополнительные шаблоны (добавляются после создания DATA) */
+DATA.push(
+ {id:'three',name:'Опрос с 3 фото',title:'Опрос — 3 фото на выбор',feat:'с 3 фото',desc:'Три картинки: что лучше, какой скин, оцени от 0 до 9',tags:'poll contest',variants:[
+  threeV('Бирюзовый','#0a9aa8','#0a6a7a','#19d3f5','Лучшая [[работа]]?'),
+  threeV('Зелёный','#2ec050','#0a5a28','#19e05a','Какой [[скин]] нравится вам?'),
+  threeV('Оценка 0–9','#7a7ae0','#3a2a8a','#8a1de8','Твой [[дом]] в Black Russia',['❤ 0 - 3','❤ 4 - 6','❤ 7 - 9'])]},
+ {id:'rebus',name:'Ребус',title:'Конкурс — Разгадайте ребус',feat:'с 3 картинками',desc:'Три картинки со знаками «+» и ответом-словом',tags:'guess contest',variants:[rebusV()]},
+ {id:'crit',name:'Критерии набора',title:'Набор — критерии на должность',feat:'со списком',desc:'Заявка на пост: 4 пункта критериев',tags:'news',variants:[critV()]},
+ {id:'hist',name:'История сервера',title:'История — фото и подпись',feat:'с фото',desc:'Вертикальная афиша с фото и подписью',tags:'news',variants:[histV()]},
+ {id:'pet',name:'Питомец администратора',title:'Рубрика — питомец администратора',feat:'с фото',desc:'Фото питомца и кличка',tags:'news',variants:[petRed()]},
+ {id:'news',name:'Новости админ-состава',title:'Новости — админ-состав',feat:'с текстом',desc:'Крупный заголовок новости на розовом фоне',tags:'news',variants:[adminNews()]}
+);
+dv('opinion').variants.push(opRed());
+dv('knew').variants.push(knewShot());
 
 function wrapT(text,maxW){var ws=text.split(/\s+/).filter(Boolean),L=[],cur='';ws.forEach(function(w){var t=cur?cur+' '+w:w;if(ctx.measureText(t).width>maxW&&cur){L.push(cur);cur=w}else cur=t});if(cur)L.push(cur);return L}
 function fontStr(l,fam,s){return (l.it?'italic ':'')+(l.wt||500)+' '+s+'px "'+fam+'", Arial, sans-serif'}
@@ -672,7 +736,6 @@ home();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){thumbs.forEach(function(p){try{drawThumb(p[0],p[1])}catch(e){}})});
 ['Oswald','Onest'].forEach(function(f){loadFont(f).then(function(){thumbs.forEach(function(p){try{drawThumb(p[0],p[1])}catch(e){}});repaint()})});
 if(/[?&]test/.test(location.search))window.__R={DATA:DATA,draw:draw,empty:empty};
-window.addEventListener('beforeunload',function(e){if(document.querySelector('.dock')&&JSON.stringify(window._lastDraft||'')!==''){e.preventDefault();e.returnValue=''}});
 
 })();
 </script>
