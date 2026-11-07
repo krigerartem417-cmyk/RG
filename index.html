@@ -1771,3 +1771,91 @@ var app=document.getElementById('app');if(app)new MutationObserver(inject).obser
 
 </body>
 </html>
+<script>
+/* Генераторы: отдельные компактные карточки вместо общей панели.
+   Вставить целиком перед </body>, после всех остальных скриптов. */
+(function(){
+'use strict';
+var G=[
+ ['rebus','Ребус — из картинок и букв','Картинки, запятые и буквы: игроки разгадывают слово','с картинками и ответом',['#8a1de8','#2e0a63'],'РАЗГАДАЙТЕ РЕБУС','И получи приз!'],
+ ['sil','Силуэт — угадай машину по тени','Загрузи фото: фон вырежется, останется чёрный силуэт','с вырезкой фона',['#2c64c4','#0f2468'],'УГАДАЙ МАШИНУ ПО СИЛУЭТУ','И получи приз!'],
+ ['puz','Загадка — перемешанный скриншот','Скриншот режется на фрагменты и перемешивается','из скриншота',['#e5262d','#5c0c14'],'УГАДАЙ ПО ФРАГМЕНТАМ','Собери картинку']
+];
+function el(t,a,k){var n=document.createElement(t);Object.keys(a||{}).forEach(function(x){if(x==='text')n.textContent=a[x];else n.setAttribute(x,a[x])});(k||[]).forEach(function(c){n.appendChild(c)});return n}
+function fit(c,t,x,y,w,s,wt,fam,col,al){for(;s>8;s--){c.font=wt+' '+s+'px "'+fam+'",Arial,sans-serif';if(c.measureText(t).width<=w)break}c.textAlign=al||'center';c.textBaseline='middle';c.fillStyle=col;c.fillText(t,x,y)}
+function box(c,x,y,w,h,r,f){c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=f;c.fill()}
+
+function thumb(cv,i){
+  var W=480,H=270,c=cv.getContext('2d'),g=G[i],p=g[4];cv.width=W;cv.height=H;
+  var gr=c.createLinearGradient(0,0,W,H);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);c.fillStyle=gr;c.fillRect(0,0,W,H);
+  var rg=c.createRadialGradient(W/2,H*.55,0,W/2,H*.55,W*.6);rg.addColorStop(0,'rgba(255,255,255,.2)');rg.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=rg;c.fillRect(0,0,W,H);
+  c.strokeStyle='rgba(255,255,255,.16)';c.lineWidth=2;
+  [[W,0],[0,H]].forEach(function(q){[54,72,92].forEach(function(r){c.beginPath();c.arc(q[0],q[1],r,0,7);c.stroke()})});
+  fit(c,g[5],W/2,32,W*.88,26,'800 italic','Onest','#fff');
+  fit(c,g[6],W/2,60,W*.7,14,'500','Oswald','rgba(255,255,255,.92)');
+  fit(c,'BLACK RUSSIA',14,258,W*.4,10,'800','Onest','#fff','left');
+  if(i===0){
+    [105,240,375].forEach(function(x,j){
+      box(c,x-42,113,84,84,9,j<2?'#fff':'#1d1229');
+      if(j<2)box(c,x-36,119,72,72,6,'#d9d2e3');
+      else fit(c,'?',x,158,60,70,'800','Onest','#ffd54a')});
+    fit(c,'+',172,155,40,40,'800','Oswald','#fff');
+    fit(c,'=',307,155,40,40,'800','Oswald','#fff');
+  }else if(i===1){
+    c.save();c.shadowColor='rgba(255,255,255,.55)';c.shadowBlur=10;c.fillStyle='#000';c.beginPath();
+    [[100,200],[105,174],[168,160],[208,130],[300,130],[342,160],[385,170],[392,200]].forEach(function(q,j){c[j?'lineTo':'moveTo'](q[0],q[1])});
+    c.closePath();c.fill();
+    [[160,203],[340,203]].forEach(function(q){c.beginPath();c.arc(q[0],q[1],21,0,7);c.fill()});
+    c.restore();
+  }else{
+    [3,7,1,5,0,8,4,2,6].forEach(function(q,j){
+      box(c,161+(j%3)*54,78+Math.floor(j/3)*54,50,50,4,'hsl('+(q*40)+',60%,'+(38+q*3)+'%)')});
+  }
+}
+
+function mount(){
+  var R=document.getElementById('rg-gen'),Z=document.getElementById('rg-puzzle');
+  if(!R||!Z||document.getElementById('rg-gens'))return;
+  /* убираем общий заголовок, вкладки и дублирующие описания */
+  Array.prototype.slice.call(R.children).forEach(function(n){if(n.tagName==='H2'||n.tagName==='P'||n.classList.contains('tabs'))n.remove()});
+  Array.prototype.slice.call(Z.children).forEach(function(n){if(n.tagName==='H2'||n.tagName==='P')n.remove()});
+
+  var grid=el('div',{'class':'grid'}),
+    list=el('div',{},[el('h2',{text:'Генераторы'}),el('p',{text:'Выберите генератор: каждый открывается отдельно. Всё считается в браузере.'}),grid]),
+    h1=el('h1'),pd=el('p'),
+    back=el('button',{type:'button','class':'back',text:'← Все генераторы'}),
+    view=el('div',{hidden:''},[back,h1,pd]),
+    W=el('section',{id:'rg-gens','class':'hud'},[list,view]),cvs=[];
+  R.parentNode.insertBefore(W,R);
+  view.appendChild(R);view.appendChild(Z);R.hidden=true;Z.hidden=true;
+
+  function open(i){
+    var k=G[i][0],a=R.querySelector('#rebus'),s=R.querySelector('#sil');
+    h1.textContent=G[i][1];pd.textContent=G[i][2];
+    list.hidden=true;view.hidden=false;
+    R.hidden=k==='puz';Z.hidden=k!=='puz';
+    if(a)a.hidden=k!=='rebus';if(s)s.hidden=k!=='sil';
+    W.scrollIntoView();
+  }
+  back.addEventListener('click',function(){view.hidden=true;list.hidden=false;W.scrollIntoView()});
+
+  G.forEach(function(g,i){
+    var cv=el('canvas',{role:'img','aria-label':'Превью генератора: '+g[1]}),
+      b=el('button',{type:'button','class':'card'},[cv,
+        el('i',{'class':'no','aria-hidden':'true',text:'№ 0'+(i+1)}),
+        el('span',{text:g[1]}),el('small',{text:g[2]}),
+        el('i',{'class':'feat',style:'font-style:normal',text:g[3]})]);
+    b.addEventListener('click',function(){open(i)});
+    grid.appendChild(b);cvs.push(cv);thumb(cv,i);
+  });
+  /* перерисовать превью, когда шрифты загрузятся */
+  if(document.fonts&&document.fonts.load)Promise.all(['800 20px Onest','500 20px Oswald'].map(function(f){return document.fonts.load(f,'Аб')}))
+    .then(function(){cvs.forEach(thumb)},function(){});
+}
+
+var app=document.getElementById('app');
+if(app)new MutationObserver(function(){mount()}).observe(app,{childList:true,subtree:true});
+mount();
+})();
+</script>
+
