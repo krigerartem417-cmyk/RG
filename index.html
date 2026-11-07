@@ -841,10 +841,10 @@ function home(){leaveCtor();repaint=function(){};thumbs=[];
         ['03','Вывод репорта — в '+RULES.day,'Итоги недели подводятся один раз.'],
         ['04','Лучший по баллам за неделю','Получает +'+RULES.bonus+' доп. репы.'],
         ['05','Скрин поста — в отчётность','Выложил → скрин → отправил в отчёт.'],
-        ['06','Вопросы — Rina Moon или ЗГРГ','По любым вопросам по постам и репе.']
+        ['06','Вопросы — ГРГ или ЗГРГ','По любым вопросам по постам и репе.']
       ].map(function(r){return h('div',{class:'ritem'},[h('i',{class:'rno','aria-hidden':'true',text:r[0]}),h('div',{},[h('b',{text:r[1]}),h('p',{text:r[2]})])])}))
     ]),
-    h('p',{style:'font-size:14px;margin-top:12px'},['Вопросы по постам: ',ext('Rina Moon',RINA_URL),' или ',ext('ЗГРГ',ZGRG_URL),'. Сообщество: ',ext('Black Russia | Surgut',SURGUT_URL),'.'])
+    h('p',{style:'font-size:14px;margin-top:12px'},['Вопросы по постам: ',ext('ГРГ',RINA_URL),' или ',ext('ЗГРГ',ZGRG_URL),'. Сообщество: ',ext('Black Russia | Surgut',SURGUT_URL),'.'])
   ]);
 
   var seen=false;try{seen=!!localStorage.getItem('br-tut')}catch(e){}var tutWrap=h('details',{class:'tutwrap'},[h('summary',{text:'📘 Обучение и правила постинга'}),tut]);tutWrap.open=!seen;tutWrap.addEventListener('toggle',function(){if(!tutWrap.open)try{localStorage.setItem('br-tut','1')}catch(e){}});
@@ -885,7 +885,7 @@ function home(){leaveCtor();repaint=function(){};thumbs=[];
     h('h2',{text:'Связь и сообщество'}),
     h('p',{},['ВКонтакте: ',vk('vk.com/id676733241'),' — вопросы, баги, предложения шаблонов.']),
     h('p',{},['Сообщество: ',ext('Black Russia | Surgut',SURGUT_URL)]),
-    h('p',{},['По постам: ',ext('Rina Moon',RINA_URL),' · ',ext('ЗГРГ',ZGRG_URL)]),
+    h('p',{},['По постам: ',ext('ГРГ',RINA_URL),' · ',ext('ЗГРГ',ZGRG_URL)]),
     h('p',{text:'Экспорт: PNG · Форматы: 16:9, квадрат, 4:5, сторис · Платформы: VK, Telegram, Discord'}),
     h('p',{},['Сделано для сообщества Black Russia · ',h('a',{href:'#rules',text:'Правила использования'})]),h('div',{class:'serial','aria-hidden':'true'},[h('span',{class:'stars',text:'★★★★★'}),h('span',{class:'bar'}),h('span',{text:'REDAKCIYA-SURGUT / 2026'})])]);
   app.replaceChildren(
@@ -1083,7 +1083,7 @@ h('h3',{text:'Перед отправкой'}),
 h('ul',{},[
 h('li',{text:'Пост написан тобой, а не скопирован.'}),
 h('li',{text:'Есть приветствие, строка «На связи», тема, задание и призыв.'}),
-h('li',{text:'Если в посте приз, есть форма ответа, а сумму приза ты согласовал с Риной или ЗГРГ.'}),
+h('li',{text:'Если в посте приз, есть форма ответа, а сумму приза ты согласовал с ГРГ или ЗГРГ.'}),
 h('li',{text:'Ссылки на Беседу, Discord и Форум стоят в конце.'}),
 h('li',{text:'Нет опечаток (например, «времяпрепровождения»), ник написан верно.'}),
 h('li',{text:'Афиша прикреплена, текст на ней читается с телефона.'})]),
@@ -1095,9 +1095,9 @@ h('div',{class:'rlst'},[
 ['03','Вывод репорта — в понедельник','Итоги недели подводятся один раз.'],
 ['04','Лучший по баллам за неделю','Получает +200 доп. репы.'],
 ['05','Скрин из «Предложенных постов» — в отчётность','Предложил пост → скрин из предложенных → отправил в отчёт.'],
-['06','Вопросы — Rina Moon или ЗГРГ','По любым вопросам по постам и репе.']
+['06','Вопросы — ГРГ или ЗГРГ','По любым вопросам по постам и репе.']
 ].map(function(r){return h('div',{class:'ritem'},[h('i',{class:'rno','aria-hidden':'true',text:r[0]}),h('div',{},[h('b',{text:r[1]}),h('p',{text:r[2]})])])}))]),
-h('p',{style:'font-size:14px;margin-top:12px'},['Вопросы по постам: ',ext('Rina Moon',U.r),' или ',ext('ЗГРГ',U.z),'. Сообщество: ',ext('Black Russia | Surgut',U.s),'.'])])}
+h('p',{style:'font-size:14px;margin-top:12px'},['Вопросы по постам: ',ext('ГРГ',U.r),' или ',ext('ЗГРГ',U.z),'. Сообщество: ',ext('Black Russia | Surgut',U.s),'.'])])}
 function mountAcademy(w){
   if(document.getElementById('academy-nav'))return;
   function jump(id){var el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
@@ -1145,7 +1145,7 @@ function mountAcademy(w){
     ul(['Информационные посты: объявления, игровые новости и полезные сведения.','Развлекательные посты: загадки, поиск предметов, угадайки и игровые задания.','Интерактивы: опросы, битвы машин и скинов, обсуждения.','Конкурсы и викторины: задания с понятными условиями и заранее согласованными призами.','Графика: афиши, иллюстрации и скриншоты, которые помогают быстро понять тему публикации.']),
     h('h3',{text:'Что входит в работу редактора'}),
     ul(['Предложить идею и определить, для кого она предназначена.','Проверить факты, игровые названия, даты, условия и ссылки.','Подготовить уникальный текст и подходящую картинку или афишу.','Проверить читабельность на телефоне и отсутствие ошибок.','Отправить публикацию через «Предложить пост» в сообществе.','Сделать скриншот именно из раздела «Предложенные посты» и передать его в группу отчётности.']),
-    h('div',{class:'academy-note',text:'По действующим инструкциям сайта: если публикация содержит приз, его сумму и условия необходимо предварительно согласовать с Rina Moon или ЗГРГ. Не обещайте награду, пока она не подтверждена.'}),
+    h('div',{class:'academy-note',text:'По действующим инструкциям сайта: если публикация содержит приз, его сумму и условия необходимо предварительно согласовать с ГРГ или ЗГРГ. Не обещайте награду, пока она не подтверждена.'}),
     h('h3',{text:'Стандарты редакции'}),
     ul(['Оригинальность: не копировать чужие публикации и не выдавать чужую работу за свою.','Достоверность: не придумывать игровые факты, должности, даты и решения администрации.','Понятность: читатель должен сразу понимать, что произошло или что нужно сделать.','Аккуратность: проверять текст, никнеймы, оформление, изображения и ссылки.','Уважение: не использовать оскорбления, провокации и личные данные игроков без разрешения.'])
   ]);
@@ -1463,7 +1463,7 @@ FONTS=['Oswald','Onest','Montserrat','Roboto Condensed','Jost','Russo One','Unbo
 LINKS=[['Беседа игроков','vk.cc/clkU4b','🔔'],['Discord','vk.cc/d0cVZZ','🔊'],['Форум','vk.cc/clkTwG','💤']],
 KEYS=['br-drafts-1','br-constructor-1','br-name','br-last','br-theme'],
 FORM='Nick_Name:\nОтвет:\nБанковский счёт:',
-PRIZE='[сумма — согласуй с Риной или ЗГРГ]',
+PRIZE='[сумма — согласуй с ГРГ или ЗГРГ]',
 TYPO=[[/времяпровожд/i,'«времяпрепровождение» пишется с «пре»'],[/время\s+препровожд/i,'«времяпрепровождение» пишется слитно'],[/пожалуйсто|извените|вобщем|ихний|координально|придти/i,'похоже на орфографическую ошибку'],[/ {2,}/,'двойной пробел']],
 TPL={
 quiz:{topic:'Викторина на знание своего сервера',task:'Готовы проверить, насколько хорошо вы знаете свой сервер? Ответьте на вопрос с картинки!',prize:1},
@@ -1506,7 +1506,7 @@ function check(T){T=T||'';var r=[];function ok(c,g,b){r.push({ok:!!c,t:c?g:b})}
   var ph=T.match(/\[[^\]\n]+\]|Твой_Ник/g);ok(!ph,'Незаполненных полей нет','Остались незаполненные поля: '+(ph||[]).slice(0,3).join(', '));
   var ty=[];TYPO.forEach(function(x){if(x[0].test(T))ty.push(x[1])});ok(!ty.length,'Опечаток не найдено','Возможные опечатки: '+ty.join('; '));
   var pr=/приз(?!ыв)|игровой валют|\d[\d.\s]*ив(?![а-яё])/i.test(T),fm=/банковск/i.test(T);
-  if(pr)ok(fm,'Для приза есть форма ответа. Сумму согласуй с Риной или ЗГРГ','Есть приз, но нет формы ответа (Nick_Name, ответ, банковский счёт)');
+  if(pr)ok(fm,'Для приза есть форма ответа. Сумму согласуй с ГРГ или ЗГРГ','Есть приз, но нет формы ответа (Nick_Name, ответ, банковский счёт)');
   else if(fm)ok(false,'','Форма со счётом нужна только если есть приз');
   ok(T.length<=1500,'Длина: '+T.length+' знаков','Длинный пост ('+T.length+' знаков): сократи задание');
   return r}
@@ -1557,6 +1557,44 @@ function backupView(v){
       msg.textContent='Восстановлено. Страница перезагрузится.';setTimeout(function(){location.reload()},900)}catch(e){msg.textContent='Это не файл копии RG Studio.'}};
     r.onerror=function(){msg.textContent='Не удалось прочитать файл.'};r.readAsText(f)})}
 
+var puzImg=null;
+function puzOrder(n){var a,t,f;for(t=0;t<300;t++){a=[];for(var i=0;i<n;i++)a.push(i);for(i=n-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}
+    f=a.filter(function(q,k){return q===k}).length;if(f<=n*0.35&&f<n)return a}
+  return a.map(function(q,k){return (k+1)%n})}
+function puzzleView(v){
+  v.append(el('h2',{text:'Генератор загадок'}),el('p',{text:'Загрузи скриншот: он разрежется на фрагменты и перемешается. Подходит для постов «Угадай» и «Собери картинку».'}));
+  var fi=el('input',{type:'file',accept:'image/*','aria-label':'Фотография'}),
+    df=el('select',{'aria-label':'Сложность'},[['3','3 × 3 — легко'],['4','4 × 4 — средне'],['5','5 × 5 — сложно'],['6','6 × 6 — очень сложно'],['8','8 × 8 — эксперт']].map(function(a){return el('option',{value:a[0],text:a[1]})})),
+    fm=el('select',{'aria-label':'Формат'},[['image/png','PNG'],['image/jpeg','JPG']].map(function(a){return el('option',{value:a[0],text:a[1]})})),
+    cv=el('canvas',{width:'1200',height:'800',role:'img','aria-label':'Предпросмотр загадки'}),st=el('div',{'class':'msg',role:'status',text:puzImg?'Фотография загружена.':'Сначала загрузите фотографию.'});
+  df.value='4';cv.style.cssText='display:block;width:100%;height:auto;border-radius:10px;margin-top:12px;background:#09070c';
+  function gen(){
+    if(!puzImg){st.textContent='Сначала загрузите фотографию.';return}
+    var g=+df.value,n=g*g,iw=puzImg.naturalWidth||puzImg.width,ih=puzImg.naturalHeight||puzImg.height,sc=Math.min(1600/iw,1600/ih,1);
+    cv.width=Math.round(iw*sc);cv.height=Math.round(ih*sc);
+    var c=cv.getContext('2d'),o=puzOrder(n),w=cv.width/g,h=cv.height/g,sw=iw/g,sh=ih/g,gap=Math.max(2,cv.width/500);
+    c.fillStyle='#17131e';c.fillRect(0,0,cv.width,cv.height);c.strokeStyle='rgba(255,255,255,.65)';c.lineWidth=Math.max(1,cv.width/1000);
+    for(var i=0;i<n;i++){var tx=(i%g)*w,ty=Math.floor(i/g)*h;
+      c.drawImage(puzImg,(o[i]%g)*sw,Math.floor(o[i]/g)*sh,sw,sh,tx+gap/2,ty+gap/2,w-gap,h-gap);
+      c.strokeRect(tx+gap/2,ty+gap/2,w-gap,h-gap)}
+    st.textContent='Готово: '+g+' × '+g+' ('+n+' фрагментов).'}
+  fi.addEventListener('change',function(){var f=fi.files&&fi.files[0];if(!f)return;
+    if(!/^image\//.test(f.type)){st.textContent='Выберите изображение.';return}
+    var u=URL.createObjectURL(f),im=new Image();
+    im.onload=function(){puzImg=im;URL.revokeObjectURL(u);gen()};
+    im.onerror=function(){URL.revokeObjectURL(u);st.textContent='Не удалось загрузить изображение.'};im.src=u});
+  df.addEventListener('change',function(){if(puzImg)gen()});
+  v.append(el('label',{text:'Фотография'}),fi,el('label',{text:'Сложность'}),df,el('label',{text:'Формат файла'}),fm,
+    el('div',{'class':'row'},[btn('Запутать фотографию',gen,''),btn('Перемешать ещё раз',gen),
+      btn('Скачать загадку',function(){if(!puzImg){st.textContent='Сначала загрузите фотографию.';return}
+        var m=fm.value;cv.toBlob(function(b){if(!b){st.textContent='Ошибка создания изображения.';return}
+          var u=URL.createObjectURL(b),a=el('a',{href:u,download:'SURGUT-zagadka.'+(m==='image/png'?'png':'jpg')});document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1500);st.textContent='Файл подготовлен к скачиванию.'},m,.95)},'')]),
+    st,cv);
+  if(puzImg)gen()}
+
+function injectPuzzle(){var pg=document.getElementById('rg-page-afisha');if(!pg||document.getElementById('rg-puzzle'))return;
+  var box=el('section',{'class':'panel',id:'rg-puzzle'});puzzleView(box);
+  var pr=pg.querySelector('.promo');if(pr&&pr.parentNode===pg)pg.insertBefore(box,pr.nextSibling);else pg.appendChild(box)}
 var TABS=[['post','Конструктор поста',postView],['check','Проверка поста',checkView],['presets','Пресеты',presetsView],['backup','Резервная копия',backupView]];
 function inject(){var tabs=document.querySelector('#rg-studio .rg-tabs'),view=document.querySelector('#rg-studio .rg-view');if(!tabs||!view||tabs.querySelector('[data-x]'))return;
   TABS.forEach(function(x){var b=btn(x[1],function(){tabs.querySelectorAll('button').forEach(function(q){q.classList.toggle('active',q===b)});view.replaceChildren();x[2](view)});b.dataset.tab=x[0];b.dataset.x='1';b.setAttribute('role','tab');tabs.appendChild(b)})}
@@ -1569,9 +1607,165 @@ function linkBox(){var app=document.getElementById('app'),id=location.hash.slice
       btn('В проекты',function(){var d=rd();d.projects.push({id:Date.now(),title:T.topic,text:out.value,type:'Пост',date:today()});msg.textContent=wr(d)?'Сохранено в «Мои проекты».':'Браузер запретил сохранение.'})]),out,msg,res]);
   app.insertBefore(box,dock);gen()}
 
-function tick(){inject();linkBox()}
+function tick(){inject();linkBox();injectPuzzle()}
 var app=document.getElementById('app');if(app)new MutationObserver(tick).observe(app,{childList:true,subtree:true});
 window.addEventListener('hashchange',function(){setTimeout(tick,50)});tick();
+})();
+</script>
+
+<style>
+#rg-gen{--in:var(--bg);--hi:var(--link,var(--acc));--mut:var(--muted)}
+#rg-gen .tabs{display:flex;gap:8px;margin:12px 0}#rg-gen .tabs button{flex:1}
+#rg-gen .gpanel{border:1px solid var(--line);border-radius:12px;padding:2px 14px 16px;margin-top:12px;background:var(--bg)}
+#rg-gen .tile{border:1px solid var(--line);border-radius:12px;padding:2px 12px 12px;margin-top:12px;background:var(--bg)}
+#rg-gen .tile h3{font:700 16px Oswald,sans-serif;margin:10px 0 0;color:var(--hi)}
+#rg-gen input:not([type]){width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 13px;min-height:46px}
+#rg-gen input[type=checkbox]{width:auto;min-height:0}
+#rg-gen .chk{display:flex;gap:10px;align-items:center;font-weight:400}
+#rg-gen .b.s{min-height:36px;padding:6px 12px;font-size:14px}
+#rg-gen .b.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+#rg-gen canvas{margin-top:14px}
+#rg-gen [hidden]{display:none!important}
+</style>
+<script>
+/* RG GEN: ребусы и силуэты на странице «Афиши и шаблоны» */
+(function(){
+'use strict';
+var HTML="<h2>Генераторы ребусов и силуэтов</h2><p>Ребус из картинок и букв и силуэт машины: фон с фото убирается нейросетью. Всё считается в браузере.</p>\n<div class=\"tabs\" role=\"tablist\"><button class=\"b on\" data-t=\"rebus\" role=\"tab\">Ребус</button><button class=\"b g\" data-t=\"sil\" role=\"tab\">Силуэт</button></div>\n<section id=\"rebus\">\n<div class=\"gpanel\">\n<label for=\"rTitle\">Заголовок</label><input id=\"rTitle\" value=\"Разгадайте ребус\">\n<label for=\"rSub\">Подзаголовок</label><input id=\"rSub\" value=\"И получи приз!\">\n<div class=\"two\">\n<div><label for=\"rPal\">Цвет</label><select id=\"rPal\"></select></div>\n<div><label for=\"rSize\">Размер</label><select id=\"rSize\"></select></div>\n</div>\n<label for=\"rAns\">Ответ (для картинки с ответом)</label><input id=\"rAns\" placeholder=\"Например: Самосвал\">\n</div>\n<div id=\"tiles\"></div>\n<div class=\"row\">\n<button class=\"b g\" id=\"addImg\">+ Картинка</button>\n<button class=\"b g\" id=\"addTxt\">+ Буквы</button>\n<button class=\"b g\" id=\"addQ\">+ Знак «?»</button>\n</div>\n<canvas id=\"rCv\" role=\"img\" aria-label=\"Предпросмотр ребуса\"></canvas>\n<div class=\"row\"><button class=\"b\" id=\"rDl\">Скачать ребус</button><button class=\"b g\" id=\"rDlA\">Скачать с ответом</button></div>\n<div class=\"msg\" id=\"rMsg\" role=\"status\"></div>\n</section>\n\n<section id=\"sil\" hidden>\n<div class=\"gpanel\">\n<label for=\"sFile\">Фото машины, скина или предмета</label><input type=\"file\" id=\"sFile\" accept=\"image/*\">\n<p>Нейросеть вырежет машину с любого фона, даже с улицы. При первом запуске нужен интернет: модель скачивается один раз (десятки МБ) и дальше берётся из кэша браузера. Если она не загрузится, выберите режим «Однотонный» или «Прозрачный».</p>\n<div class=\"two\">\n<div><label for=\"sMode\">Фон фото</label><select id=\"sMode\"><option value=\"ai\" selected>Убрать любой фон (нейросеть)</option><option value=\"auto\">Определить сам</option><option value=\"alpha\">Прозрачный (PNG)</option><option value=\"color\">Однотонный, убрать по цвету</option></select></div>\n<div><label for=\"sBg\">Цвет фона фото</label><input type=\"color\" id=\"sBg\" value=\"#ffffff\"></div>\n</div>\n<label for=\"sTol\">Допуск цвета: <span id=\"sTolV\">40</span></label><input type=\"range\" id=\"sTol\" min=\"5\" max=\"150\" value=\"40\">\n<div class=\"row\" style=\"margin-top:6px\"><button class=\"b g s\" id=\"sCorner\">Взять цвет фона из угла</button></div>\n<label for=\"sTitle\">Заголовок</label><input id=\"sTitle\" value=\"Угадай машину по силуэту\">\n<label for=\"sSub\">Подзаголовок</label><input id=\"sSub\" value=\"И получи приз!\">\n<label for=\"sAns\">Ответ (для картинки с ответом)</label><input id=\"sAns\" placeholder=\"Например: BMW M5\">\n<div class=\"two\">\n<div><label for=\"sPal\">Цвет</label><select id=\"sPal\"></select></div>\n<div><label for=\"sSize\">Размер</label><select id=\"sSize\"></select></div>\n</div>\n<label for=\"sCol\">Цвет силуэта</label><input type=\"color\" id=\"sCol\" value=\"#000000\">\n<label class=\"chk\"><input type=\"checkbox\" id=\"sGlow\" checked>Светлая подсветка по контуру</label>\n</div>\n<canvas id=\"sCv\" role=\"img\" aria-label=\"Предпросмотр силуэта\"></canvas>\n<div class=\"row\"><button class=\"b\" id=\"sDl\">Скачать силуэт</button><button class=\"b g\" id=\"sDlA\">Скачать с ответом</button></div>\n<div class=\"msg\" id=\"sMsg\" role=\"status\">Загрузите фото, чтобы начать.</div>\n</section>\n";
+function init(){
+var R=document.getElementById('rg-gen');var $=function(s){return R.querySelector(s)};
+function el(t,a,k){var n=document.createElement(t);for(var x in a||{}){if(x==='text')n.textContent=a[x];else n.setAttribute(x,a[x])}(k||[]).forEach(function(c){n.appendChild(typeof c==='string'?document.createTextNode(c):c)});return n}
+var PAL={'Фиолетовый':['#8a1de8','#2e0a63'],'Красный':['#e5262d','#5c0c14'],'Синий':['#2c64c4','#0f2468'],'Бирюзовый':['#14a3a8','#0a3b4a'],'Тёмный':['#34283f','#09070c']};
+var SZ=[['16:9 · 1920×1080',1920,1080],['Квадрат · 1080×1080',1080,1080],['4:5 · 1080×1350',1080,1350]];
+['rPal','sPal'].forEach(function(id){Object.keys(PAL).forEach(function(k){$('#'+id).appendChild(el('option',{value:k,text:k}))})});
+['rSize','sSize'].forEach(function(id){SZ.forEach(function(s,i){$('#'+id).appendChild(el('option',{value:i,text:s[0]}))})});
+
+/* ---------- общее рисование ---------- */
+function rr(c,x,y,w,h,r){c.beginPath();if(c.roundRect)c.roundRect(x,y,w,h,r);else c.rect(x,y,w,h)}
+function txt(c,t,x,y,maxW,size,wt,fam,up,col,al){t=String(t||'');if(up)t=t.toUpperCase();var s=size;
+  for(;s>10;s-=2){c.font=wt+' '+s+'px "'+fam+'",Arial,sans-serif';if(c.measureText(t).width<=maxW)break}
+  c.textAlign=al||'center';c.textBaseline='middle';c.fillStyle=col;c.fillText(t,x,y)}
+function base(c,W,H,pal,title,sub){
+  var g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,pal[0]);g.addColorStop(1,pal[1]);c.fillStyle=g;c.fillRect(0,0,W,H);
+  var r=c.createRadialGradient(W/2,H*.55,0,W/2,H*.55,W*.6);r.addColorStop(0,'rgba(255,255,255,.2)');r.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=r;c.fillRect(0,0,W,H);
+  c.strokeStyle='rgba(255,255,255,.16)';c.lineWidth=Math.max(2,W/600);
+  [[W,0],[0,H]].forEach(function(p){[.2,.27,.34].forEach(function(k){c.beginPath();c.arc(p[0],p[1],Math.min(W,H)*k,0,7);c.stroke()})});
+  txt(c,title,W/2,H*.12,W*.88,H*.095,'800 italic','Onest',true,'#fff');
+  if(sub)txt(c,sub,W/2,H*.22,W*.7,H*.05,'500','Oswald',false,'rgba(255,255,255,.92)');
+  txt(c,'BLACK RUSSIA',W*.03,H*.955,W*.4,H*.034,'800','Onest',false,'#fff','left');
+  var pw=W*.14,ph=H*.055,px=W*.97-pw,py=H*.955-ph/2;rr(c,px,py,pw,ph,ph/2);c.fillStyle='rgba(255,255,255,.2)';c.fill();c.lineWidth=2;c.strokeStyle='rgba(255,255,255,.6)';c.stroke();
+  txt(c,'Surgut',px+pw/2,H*.955,pw*.8,ph*.6,'700','Onest',false,'#fff')}
+function answer(c,W,H,a){if(!a)return;var w=W*.7,h=H*.085,x=(W-w)/2,y=H*.835;rr(c,x,y,w,h,h/2);c.fillStyle='rgba(0,0,0,.45)';c.fill();c.lineWidth=3;c.strokeStyle='#ffd54a';c.stroke();txt(c,'Ответ: '+a,W/2,y+h/2,w*.9,h*.55,'700','Oswald',false,'#fff')}
+function cover(c,im,x,y,w,h){var iw=im.naturalWidth||im.width,ih=im.naturalHeight||im.height,k=Math.max(w/iw,h/ih);c.save();rr(c,x,y,w,h,Math.min(w,h)*.08);c.clip();c.drawImage(im,x+(w-iw*k)/2,y+(h-ih*k)/2,iw*k,ih*k);c.restore()}
+function save(cv,name,msg){cv.toBlob(function(b){if(!b){msg.textContent='Не удалось создать файл.';return}
+  var f=new File([b],name,{type:'image/png'});
+  if('ontouchstart' in window&&navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f]}).catch(function(){});msg.textContent='Откройте «Поделиться» и сохраните в Галерею или Файлы.';return}
+  var u=URL.createObjectURL(b),a=el('a',{href:u,download:name});document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},3000);msg.textContent='Файл скачан: '+name},'image/png')}
+function loadImg(file,ok,bad){var u=URL.createObjectURL(file),i=new Image();i.onload=function(){URL.revokeObjectURL(u);ok(i)};i.onerror=function(){URL.revokeObjectURL(u);bad()};i.src=u}
+var raf={};function soon(k,f){if(raf[k])return;raf[k]=requestAnimationFrame(function(){raf[k]=0;f()})}
+
+/* ---------- РЕБУС ---------- */
+var T=[{k:'img',sign:'+',l:0,r:0,cap:''},{k:'img',sign:'=',l:0,r:0,cap:''},{k:'q',sign:'',l:0,r:0,cap:''}];
+var rcv=$('#rCv');
+function tile(c,t,x,y,s){
+  c.save();c.shadowColor='rgba(0,0,0,.4)';c.shadowBlur=s*.1;c.shadowOffsetY=s*.04;rr(c,x-s/2,y-s/2,s,s,s*.08);
+  if(t.k==='img'){c.fillStyle='#fff'}else{var g=c.createLinearGradient(x,y-s/2,x,y+s/2);g.addColorStop(0,'#2b1d3d');g.addColorStop(1,'#120a1c');c.fillStyle=g}
+  c.fill();c.restore();
+  if(t.k==='img'){var p=s*.03;if(t.im)cover(c,t.im,x-s/2+p,y-s/2+p,s-2*p,s-2*p);else{rr(c,x-s/2+p,y-s/2+p,s-2*p,s-2*p,s*.06);c.fillStyle='#d9d2e3';c.fill();txt(c,'Фото',x,y,s*.7,s*.18,'500','Onest',true,'#7d6f90')}}
+  else if(t.k==='q')txt(c,'?',x,y+s*.03,s*.8,s*.8,'800','Onest',false,'#ffd54a');
+  else txt(c,t.txt||'АБВ',x,y,s*.86,s*.5,'800','Onest',true,'#fff');
+  [['l',x-s/2],['r',x+s/2]].forEach(function(q){var n=t[q[0]];if(!n)return;var str=new Array(n+1).join(','),bw=s*.16*n+s*.14,bh=s*.2,bx=q[0]==='l'?q[1]-bw*.3:q[1]-bw*.7,by=y-s/2-bh*.5;
+    rr(c,bx,by,bw,bh,bh/2);c.fillStyle='#ffd54a';c.fill();txt(c,str,bx+bw/2,by+bh*.38,bw,bh*1.1,'800','Onest',false,'#1a0f26')});
+  if(t.cap)txt(c,t.cap,x,y+s/2+s*.14,s*1.3,s*.17,'700','Oswald',false,'#fff')}
+function drawRebus(cv,ans){
+  var S=SZ[+$('#rSize').value],W=S[1],H=S[2],pal=PAL[$('#rPal').value];cv.width=W;cv.height=H;var c=cv.getContext('2d');
+  base(c,W,H,pal,$('#rTitle').value,$('#rSub').value);var n=T.length;
+  if(n){var rows=n>4?2:1,cols=Math.ceil(n/rows),top=H*.3,aH=H*.52,cw=W*.94/cols,rh=aH/rows,s=Math.min(cw/1.4,rh*.7,380);
+    T.forEach(function(t,i){var r=Math.floor(i/cols),q=i%cols,x=W*.03+cw*(q+.5)-s*.12,y=top+rh*(r+.5)-s*.04;tile(c,t,x,y,s);
+      if(t.sign)txt(c,t.sign,x+s/2+(cw-s)*.38+s*.04,y,s*.5,s*.42,'800','Oswald',false,'#fff')})}
+  if(ans)answer(c,W,H,$('#rAns').value.trim()||'—')}
+function rRender(){drawRebus(rcv,false)}
+function rList(){var box=$('#tiles');box.replaceChildren();
+  T.forEach(function(t,i){var d=el('div',{'class':'tile'}),h=el('h3',{text:(i+1)+'. '+({img:'Картинка',txt:'Буквы',q:'Знак «?»'})[t.k]});d.appendChild(h);
+    if(t.k==='img'){var f=el('input',{type:'file',accept:'image/*','aria-label':'Фото '+(i+1)});f.addEventListener('change',function(){if(f.files[0])loadImg(f.files[0],function(im){t.im=im;rRender()},function(){$('#rMsg').textContent='Не удалось прочитать файл.'})});d.append(el('label',{text:'Фото'}),f)}
+    if(t.k==='txt'){var x=el('input',{value:t.txt||'','aria-label':'Буквы',placeholder:'Например: К, О, Т'});x.addEventListener('input',function(){t.txt=x.value;soon('r',rRender)});d.append(el('label',{text:'Буквы'}),x)}
+    function sel(lab,key,opts){var s=el('select',{'aria-label':lab},opts.map(function(o){return el('option',{value:o[0],text:o[1]})}));s.value=String(t[key]);s.addEventListener('change',function(){t[key]=typeof opts[0][0]==='number'?+s.value:s.value;rRender()});return el('div',{},[el('label',{text:lab}),s])}
+    var C=[[0,'нет'],[1,','],[2,',,'],[3,',,,']];
+    d.append(el('div',{'class':'two'},[sel('Запятые слева (убрать первые буквы)','l',C),sel('Запятые справа (убрать последние буквы)','r',C)]));
+    var cp=el('input',{value:t.cap,placeholder:'Например: 3 1 2','aria-label':'Подпись'});cp.addEventListener('input',function(){t.cap=cp.value;soon('r',rRender)});
+    d.append(el('div',{'class':'two'},[el('div',{},[el('label',{text:'Подпись под картинкой'}),cp]),sel('Знак после','sign',[['','нет'],['+','+'],['−','−'],['=','='],[',',',']])]));
+    var row=el('div',{'class':'row'});
+    [['↑',-1],['↓',1]].forEach(function(m){var b=el('button',{type:'button','class':'b g s',text:m[0],'aria-label':m[1]<0?'Выше':'Ниже'});b.addEventListener('click',function(){var j=i+m[1];if(j<0||j>=T.length)return;var a=T.splice(i,1)[0];T.splice(j,0,a);rList();rRender()});row.appendChild(b)});
+    var del=el('button',{type:'button','class':'b g s',text:'Удалить'});del.addEventListener('click',function(){T.splice(i,1);rList();rRender()});row.appendChild(del);d.appendChild(row);box.appendChild(d)})}
+function addT(k){T.push({k:k,sign:'',l:0,r:0,cap:'',txt:''});rList();rRender()}
+$('#addImg').addEventListener('click',function(){addT('img')});$('#addTxt').addEventListener('click',function(){addT('txt')});$('#addQ').addEventListener('click',function(){addT('q')});
+['#rTitle','#rSub'].forEach(function(s){$(s).addEventListener('input',function(){soon('r',rRender)})});['#rPal','#rSize'].forEach(function(s){$(s).addEventListener('change',rRender)});
+$('#rDl').addEventListener('click',function(){drawRebus(rcv,false);save(rcv,'rebus.png',$('#rMsg'))});
+$('#rDlA').addEventListener('click',function(){drawRebus(rcv,true);save(rcv,'rebus-otvet.png',$('#rMsg'));setTimeout(rRender,400)});
+
+/* ---------- СИЛУЭТ ---------- */
+var SI=null,SIcut=null,SF=null,SM=null,scv=$('#sCv'),AIM=null;
+function hex(h){var n=parseInt(h.slice(1),16);return[n>>16&255,n>>8&255,n&255]}
+function cornerColor(d,w,h){var P=[[0,0],[w-1,0],[0,h-1],[w-1,h-1]],a=[0,0,0];P.forEach(function(p){var i=(p[1]*w+p[0])*4;a[0]+=d[i];a[1]+=d[i+1];a[2]+=d[i+2]});return a.map(function(v){return Math.round(v/4)})}
+function toHex(a){return '#'+a.map(function(v){return('0'+v.toString(16)).slice(-2)}).join('')}
+function mkMask(){if(!SI)return;var SRC=$('#sMode').value==='ai'?SIcut:SI;if(!SRC)return;
+  var iw=SRC.naturalWidth||SRC.width,ih=SRC.naturalHeight||SRC.height,k=Math.min(1,1100/Math.max(iw,ih)),w=Math.round(iw*k),h=Math.round(ih*k),o=document.createElement('canvas');o.width=w;o.height=h;
+  var oc=o.getContext('2d');oc.drawImage(SRC,0,0,w,h);var id=oc.getImageData(0,0,w,h),d=id.data,m=new Uint8Array(w*h),mode=$('#sMode').value,i;
+  var hasA=false;for(i=3;i<d.length;i+=4)if(d[i]<200){hasA=true;break}
+  if(mode==='ai'||mode==='alpha'||(mode==='auto'&&hasA)){var th=mode==='ai'?110:40;for(i=0;i<m.length;i++)m[i]=d[i*4+3]>th?1:0}
+  else{var bg=hex($('#sBg').value),tol=+$('#sTol').value*3,seen=new Uint8Array(w*h),st=[];
+    function ok(p){var j=p*4;return Math.abs(d[j]-bg[0])+Math.abs(d[j+1]-bg[1])+Math.abs(d[j+2]-bg[2])<=tol}
+    function push(p){if(!seen[p]&&ok(p)){seen[p]=1;st.push(p)}}
+    for(var x=0;x<w;x++){push(x);push((h-1)*w+x)}for(var y=0;y<h;y++){push(y*w);push(y*w+w-1)}
+    while(st.length){var p=st.pop(),px=p%w;if(px>0)push(p-1);if(px<w-1)push(p+1);if(p>=w)push(p-w);if(p<w*(h-1))push(p+w)}
+    for(i=0;i<m.length;i++)m[i]=seen[i]?0:1}
+  var x0=w,y0=h,x1=-1,y1=-1;for(i=0;i<m.length;i++)if(m[i]){var xx=i%w,yy=(i-xx)/w;if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy<y0)y0=yy;if(yy>y1)y1=yy}
+  if(x1<0){SM=null;$('#sMsg').textContent='Силуэт не найден: увеличьте допуск или выберите другой режим.';sRender();return}
+  var bw=x1-x0+1,bh=y1-y0+1,mc=document.createElement('canvas');mc.width=bw;mc.height=bh;var mx=mc.getContext('2d'),md=mx.createImageData(bw,bh);
+  for(var yy2=0;yy2<bh;yy2++)for(var xx2=0;xx2<bw;xx2++){if(m[(yy2+y0)*w+xx2+x0]){var q=(yy2*bw+xx2)*4;md.data[q+3]=255}}
+  mx.putImageData(md,0,0);
+  var cc=document.createElement('canvas');cc.width=bw;cc.height=bh;var cx=cc.getContext('2d');cx.drawImage(o,x0,y0,bw,bh,0,0,bw,bh);cx.globalCompositeOperation='destination-in';cx.drawImage(mc,0,0);
+  SM={mask:mc,pic:cc,w:bw,h:bh};$('#sMsg').textContent='Силуэт готов: '+bw+'×'+bh+' px.';sRender()}
+function drawSil(cv,ans){
+  var S=SZ[+$('#sSize').value],W=S[1],H=S[2],pal=PAL[$('#sPal').value];cv.width=W;cv.height=H;var c=cv.getContext('2d');
+  base(c,W,H,pal,ans&&$('#sAns').value.trim()?'Это '+$('#sAns').value.trim():$('#sTitle').value,$('#sSub').value);
+  if(!SM){txt(c,'Загрузите фото',W/2,H*.55,W*.6,H*.07,'500','Oswald',false,'rgba(255,255,255,.7)');return}
+  var aw=W*.84,ah=H*.56,k=Math.min(aw/SM.w,ah/SM.h),w=SM.w*k,h=SM.h*k,x=(W-w)/2,y=H*.3+(ah-h)/2+H*.02;
+  if(ans){c.save();c.shadowColor='rgba(0,0,0,.45)';c.shadowBlur=H*.03;c.shadowOffsetY=H*.012;c.drawImage(SM.pic,x,y,w,h);c.restore();return}
+  var t=document.createElement('canvas');t.width=SM.w;t.height=SM.h;var tc=t.getContext('2d');tc.drawImage(SM.mask,0,0);tc.globalCompositeOperation='source-in';tc.fillStyle=$('#sCol').value;tc.fillRect(0,0,SM.w,SM.h);
+  c.save();if($('#sGlow').checked){c.shadowColor='rgba(255,255,255,.55)';c.shadowBlur=H*.03}c.drawImage(t,x,y,w,h);c.restore()}
+function sRender(){drawSil(scv,false)}
+function runAI(){var msg=$('#sMsg'),f=SF;if(!f)return;msg.textContent='Загрузка нейросети… первый раз это может занять минуту.';
+  if(!AIM)AIM=import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
+  AIM.then(function(M){return M.removeBackground(f,{output:{format:'image/png'},progress:function(k,c,t){if(t)msg.textContent='Загрузка модели: '+Math.round(c/t*100)+'%'}})})
+  .then(function(blob){msg.textContent='Вырезаю фон…';loadImg(blob,function(im){if(f!==SF)return;SIcut=im;mkMask()},function(){msg.textContent='Не удалось обработать результат.'})})
+  .catch(function(){AIM=null;msg.textContent='Нейросеть не загрузилась (нужен интернет). Включён режим «Определить сам».';$('#sMode').value='auto';mkMask()})}
+$('#sFile').addEventListener('change',function(){var f=this.files[0];if(!f)return;$('#sMsg').textContent='Обработка…';
+  loadImg(f,function(im){SI=im;SIcut=null;SF=f;var iw=im.naturalWidth,ih=im.naturalHeight,k=Math.min(1,200/Math.max(iw,ih)),o=document.createElement('canvas');o.width=Math.max(1,Math.round(iw*k));o.height=Math.max(1,Math.round(ih*k));var oc=o.getContext('2d');oc.drawImage(im,0,0,o.width,o.height);
+    $('#sBg').value=toHex(cornerColor(oc.getImageData(0,0,o.width,o.height).data,o.width,o.height));if($('#sMode').value==='ai')runAI();else mkMask()},function(){$('#sMsg').textContent='Не удалось прочитать файл. Попробуйте JPG или PNG.'})});
+$('#sCorner').addEventListener('click',function(){if(!SI){$('#sMsg').textContent='Сначала загрузите фото.';return}var o=document.createElement('canvas');o.width=o.height=1;
+  var s=Math.min(1,200/Math.max(SI.naturalWidth,SI.naturalHeight)),w=Math.max(1,Math.round(SI.naturalWidth*s)),h=Math.max(1,Math.round(SI.naturalHeight*s));o.width=w;o.height=h;var oc=o.getContext('2d');oc.drawImage(SI,0,0,w,h);
+  $('#sBg').value=toHex(cornerColor(oc.getImageData(0,0,w,h).data,w,h));$('#sMode').value='color';mkMask()});
+$('#sTol').addEventListener('input',function(){$('#sTolV').textContent=this.value;soon('m',mkMask)});
+['#sMode','#sBg'].forEach(function(s){$(s).addEventListener('change',function(){if(s==='#sBg')$('#sMode').value='color';if(s==='#sMode'&&$('#sMode').value==='ai'&&SI&&!SIcut){runAI();return}mkMask()})});
+['#sTitle','#sSub'].forEach(function(s){$(s).addEventListener('input',function(){soon('s',sRender)})});['#sPal','#sSize','#sCol','#sGlow'].forEach(function(s){$(s).addEventListener('change',sRender)});
+$('#sDl').addEventListener('click',function(){if(!SM){$('#sMsg').textContent='Сначала загрузите фото.';return}drawSil(scv,false);save(scv,'silhouette.png',$('#sMsg'))});
+$('#sDlA').addEventListener('click',function(){if(!SM){$('#sMsg').textContent='Сначала загрузите фото.';return}drawSil(scv,true);save(scv,'silhouette-otvet.png',$('#sMsg'));setTimeout(sRender,400)});
+
+/* ---------- вкладки и шрифты ---------- */
+R.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){
+  R.querySelectorAll('.tabs button').forEach(function(x){var on=x===b;x.classList.toggle('on',on);x.classList.toggle('g',!on)});
+  $('#rebus').hidden=b.dataset.t!=='rebus';$('#sil').hidden=b.dataset.t!=='sil'})});
+function all(){rRender();sRender()}
+rList();all();
+if(document.fonts&&document.fonts.load)Promise.all(['500 40px Oswald','700 40px Oswald','800 40px Onest','500 40px Onest'].map(function(f){return document.fonts.load(f,'Аб')})).then(all,all);
+}
+function inject(){var pg=document.getElementById('rg-page-afisha');if(!pg||document.getElementById('rg-gen'))return;
+ var box=document.createElement('section');box.id='rg-gen';box.className='panel';box.innerHTML=HTML;
+ var pz=document.getElementById('rg-puzzle'),pr=pg.querySelector('.promo');
+ if(pz&&pz.parentNode===pg)pg.insertBefore(box,pz.nextSibling);else if(pr&&pr.parentNode===pg)pg.insertBefore(box,pr.nextSibling);else pg.appendChild(box);
+ init()}
+var app=document.getElementById('app');if(app)new MutationObserver(inject).observe(app,{childList:true,subtree:true});inject();
 })();
 </script>
 
