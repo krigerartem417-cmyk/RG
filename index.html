@@ -4,6 +4,64 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Редакция SURGUT — конструктор постов для сообщества Black Russia</title>
+  <script>
+(function(){
+var M={'афиша':'картинка','афиши':'картинки','афише':'картинке','афишу':'картинку','афишей':'картинкой','афиш':'картинок','афишам':'картинкам','афишами':'картинками','афишах':'картинках'};
+function fx(t){
+  if(typeof t!=='string')return t;
+  return t.replace(/афиш[а-яё]*/gi,function(w){
+    var r=M[w.toLowerCase()]||'картинка';
+    return w===w.toUpperCase()?r.toUpperCase():w[0]===w[0].toUpperCase()?r[0].toUpperCase()+r.slice(1):r;
+  }).replace(/afisha/g,'kartinka');
+}
+var AT=['aria-label','alt','placeholder','title'];
+function walk(n){
+  if(n.nodeType===3){var v=fx(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v;return}
+  if(n.nodeType!==1||n.tagName==='SCRIPT'||n.tagName==='STYLE')return;
+  AT.forEach(function(a){var v=n.getAttribute(a);if(v){var w=fx(v);if(w!==v)n.setAttribute(a,w)}});
+  for(var c=n.firstChild;c;c=c.nextSibling)walk(c);
+}
+function each(r,s,f){[].forEach.call(r.querySelectorAll(s),f)}
+var NEW='Сделай картинку для поста: скриншот из игры или любое изображение. Где и в чём — неважно.';
+function tut(){
+  var T=document.querySelector('.tut');if(!T)return;
+  each(T,'h3',function(h){
+    if(h.textContent!=='Какой шаблон под какой пост')return;
+    var d=h.nextElementSibling;if(d&&d.tagName==='DIV')d.remove();h.remove();
+  });
+  each(T,'.pst button',function(b){if(b.textContent==='Открыть шаблон')b.remove()});
+  each(T,'ol li',function(li){
+    var x=li.textContent;
+    if(/^Выбери (тип|формат) поста/.test(x))li.textContent=NEW;
+    else if(/^(Загрузи свои (скриншоты|картинки)|Скачай готовую)/.test(x))li.remove();
+  });
+  each(T,'.pst > p',function(p){
+    var x=p.textContent,y=x.replace(/^Картинка: шаблон /,'Картинка: ').replace(', без картинки','');
+    if(y!==x)p.textContent=y;
+  });
+}
+function init(){
+  walk(document.body);tut();
+  each(document,'meta[content]',function(m){var c=m.getAttribute('content'),v=fx(c);if(v!==c)m.setAttribute('content',v)});
+  var t=fx(document.title);if(t!==document.title)document.title=t;
+  new MutationObserver(function(ms){
+    ms.forEach(function(m){
+      if(m.type==='characterData'){var v=fx(m.target.nodeValue);if(v!==m.target.nodeValue)m.target.nodeValue=v}
+      else m.addedNodes.forEach(walk);
+    });
+    tut();
+  }).observe(document.body,{childList:true,subtree:true,characterData:true});
+}
+try{
+  var d0=Object.getOwnPropertyDescriptor(HTMLAnchorElement.prototype,'download');
+  Object.defineProperty(HTMLAnchorElement.prototype,'download',{configurable:true,enumerable:d0.enumerable,get:d0.get,set:function(v){d0.set.call(this,fx(String(v)))}});
+}catch(e){}
+try{
+  if(navigator.share){var s0=navigator.share.bind(navigator);navigator.share=function(d){return s0(d&&d.title?Object.assign({},d,{title:fx(d.title)}):d)}}
+}catch(e){}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 <meta name="description" content="Готовые шаблоны афиш и постов для сообщества Black Russia: викторины, битвы, опросы, конкурсы. Обучение для агентов и правила постинга. Меняйте текст, загружайте картинки и скачивайте PNG за минуту.">
 <link rel="canonical" href="https://krigerartem417-cmyk.github.io/RG/">
 <meta property="og:title" content="Редакция SURGUT — конструктор постов">
@@ -1045,4 +1103,4 @@ h('p',{style:'font-size:14px;margin-top:12px'},['Вопросы по поста�
 function patch(){var w=document.querySelector('.tutwrap');if(!w||w.getAttribute('data-n'))return;var o=w.querySelector('.tut');if(!o)return;w.setAttribute('data-n','1');o.replaceWith(build())}
 patch();new MutationObserver(patch).observe(document.getElementById('app'),{childList:true,subtree:true});
 })();
-</script>
+</script> 
