@@ -1281,7 +1281,7 @@ function mount(){
  var names=[['home','Обзор'],['prompt','AI-помощник'],['calendar','Контент-план'],['projects','Мои проекты'],['ideas','Банк идей']];
  var active='home';
  function show(name){
-   active=name;tabs.querySelectorAll('button').forEach(function(b){b.classList.toggle('active',b.dataset.tab===name)});
+   db=read();db.presets=db.presets||{};active=name;tabs.querySelectorAll('button').forEach(function(b){b.classList.toggle('active',b.dataset.tab===name)});
    view.replaceChildren();
    if(name==='home')homeView();
    if(name==='prompt')promptView();
@@ -1346,11 +1346,11 @@ function mount(){
  }
  function calendarView(){
    view.append(el('h2',{text:'Контент-план'}),el('p',{class:'rg-muted',text:'Локальный план публикаций. Записи сохраняются в этом браузере на устройстве.'}));
-   var title=field('Название публикации','Например: викторина про автомобили'),date=el('input',{type:'date',value:dateNow()}),status=el('select',{},[['idea','Идея'],['draft','Черновик'],['ready','Готово'],['published','Опубликовано']].map(function(x){return el('option',{value:x[0],text:x[1]})}));
+   var title=field('Название публикации','Например: викторина про автомобили'),date=el('input',{type:'date',value:dateNow()}),status=el('select',{},[['idea','Идея'],['draft','Черновик'],['ready','Готово'],['proposed','Предложен'],['reported','Скрин в отчётности'],['published','Опубликовано']].map(function(x){return el('option',{value:x[0],text:x[1]})}));
    view.append(title.wrap,el('label',{text:'Дата публикации'}),date,el('label',{text:'Статус'}),status);
    var list=el('div',{}),msg=el('div',{class:'msg',role:'status'});
    view.append(btn('Добавить в план',function(){if(!title.input.value.trim()){msg.textContent='Укажи название публикации.';return}db.posts.push({id:Date.now(),title:title.input.value.trim(),date:date.value||dateNow(),status:status.value,text:'',type:'План'});save();title.input.value='';draw();msg.textContent='Запись добавлена.'}),msg,list);
-   function draw(){list.replaceChildren();var a=db.posts.slice().sort(function(x,y){return String(x.date||'').localeCompare(String(y.date||''))});if(!a.length){list.append(el('p',{class:'rg-muted',text:'Пока нет запланированных публикаций.'}));return}a.forEach(function(p){var labels={idea:'Идея',draft:'Черновик',ready:'Готово',published:'Опубликовано'};var e=el('div',{class:'rg-entry'},[el('div',{class:'rg-entry-head'},[el('b',{text:p.title}),el('small',{text:p.date||'Без даты'})]),el('p',{text:labels[p.status]||p.type||'Запись'})]);e.append(el('div',{class:'rg-actions'},[btn('Удалить',function(){db.posts=db.posts.filter(function(x){return x.id!==p.id});save();draw()})]));list.append(e)})}
+   function draw(){list.replaceChildren();var a=db.posts.slice().sort(function(x,y){return String(x.date||'').localeCompare(String(y.date||''))});if(!a.length){list.append(el('p',{class:'rg-muted',text:'Пока нет запланированных публикаций.'}));return}a.forEach(function(p){var labels={idea:'Идея',draft:'Черновик',ready:'Готово',proposed:'Предложен',reported:'Скрин в отчётности',published:'Опубликовано'};var e=el('div',{class:'rg-entry'},[el('div',{class:'rg-entry-head'},[el('b',{text:p.title}),el('small',{text:p.date||'Без даты'})]),el('p',{text:labels[p.status]||p.type||'Запись'})]);if(p.type==='План'){var ss=el('select',{},Object.keys(labels).map(function(k){return el('option',{value:k,text:labels[k]})}));ss.value=p.status||'idea';ss.addEventListener('change',function(){p.status=ss.value;save();draw()});e.append(ss)}e.append(el('div',{class:'rg-actions'},[btn('Удалить',function(){db.posts=db.posts.filter(function(x){return x.id!==p.id});save();draw()})]));list.append(e)})}
    draw();
  }
  function projectsView(){
@@ -1399,7 +1399,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 'use strict';
 function setupPages(){
  var app=document.getElementById('app');
- if(!app||app.dataset.multiPageReady==='1')return false;
+ if(!app||app.querySelector('#rg-site-shell'))return false;
  var studio=app.querySelector('#rg-studio'),academyNav=app.querySelector('#academy-nav'),modules=app.querySelector('#academy-modules'),ticker=app.querySelector('.ticker');
  if(!studio||!academyNav||!modules||!ticker)return false;
  var direct=Array.from(app.children);
@@ -1449,8 +1449,129 @@ function setupPages(){
  var initial=(location.hash||'').replace('#','');show(pages[initial]?initial:'home',false);
  return true;
 }
-function boot(){if(setupPages())return;var tries=0;var timer=setInterval(function(){tries++;if(setupPages()||tries>80)clearInterval(timer)},100)}
+function boot(){new MutationObserver(function(){setupPages()}).observe(document.getElementById('app'),{childList:true,subtree:true});if(setupPages())return;var tries=0;var timer=setInterval(function(){tries++;if(setupPages()||tries>80)clearInterval(timer)},100)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+
+<script>
+/* RG STUDIO 2.1: пост, проверка, пресеты, бэкап, текст к шаблону */
+(function(){
+'use strict';
+var STORE='rg-studio-v2',
+FONTS=['Oswald','Onest','Montserrat','Roboto Condensed','Jost','Russo One','Unbounded','Rubik','Exo 2','Playfair Display','Pacifico','Caveat'],
+LINKS=[['Беседа игроков','vk.cc/clkU4b','🔔'],['Discord','vk.cc/d0cVZZ','🔊'],['Форум','vk.cc/clkTwG','💤']],
+KEYS=['br-drafts-1','br-constructor-1','br-name','br-last','br-theme'],
+FORM='Nick_Name:\nОтвет:\nБанковский счёт:',
+PRIZE='[сумма — согласуй с Риной или ЗГРГ]',
+TYPO=[[/времяпровожд/i,'«времяпрепровождение» пишется с «пре»'],[/время\s+препровожд/i,'«времяпрепровождение» пишется слитно'],[/пожалуйсто|извените|вобщем|ихний|координально|придти/i,'похоже на орфографическую ошибку'],[/ {2,}/,'двойной пробел']],
+TPL={
+quiz:{topic:'Викторина на знание своего сервера',task:'Готовы проверить, насколько хорошо вы знаете свой сервер? Ответьте на вопрос с картинки!',prize:1},
+battle:{topic:'Битва',task:'Перед вами два варианта. Какой нравится больше?',call:'Пишите свой выбор в комментариях.'},
+far:{topic:'Угадай машины по фаре',task:'Определите, каким автомобилям принадлежат фары на картинке.',prize:1,form:'Nick_Name:\nОтветы:\nБанковский счёт:'},
+interior:{topic:'Угадай интерьер по скриншоту',task:'Сможешь определить, что это за интерьер в BLACK RUSSIA? Внимательно рассмотри изображение.'},
+repeat:{topic:'Повтори фото',task:'Повторите фотографию с картинки, сделайте свой скриншот в игре и отправьте его в комментарии.',prize:1,form:'Nick_Name\nСкриншот работы\nБанковский счёт'},
+opinion:{topic:'Хотим услышать ваше мнение',task:'[Вопрос игрокам]',call:'Делитесь мнением в комментариях.'},
+like:{topic:'От твоего лайка зависит',task:'Поставьте лайк под понравившимся вариантом: каждый лайк — голос.',call:'Голосуйте и пишите комментарии.'},
+knew:{topic:'А вы знали?',task:'[Интересный факт о сервере]',call:'Знали ли вы об этом? Пишите в комментариях.'},
+fact:{topic:'Интересный факт',task:'[Интересный факт и цифры]',call:'Что думаете? Пишите в комментариях.'},
+three:{topic:'Опрос: выберите вариант',task:'Выберите один из трёх вариантов на картинке.',call:'Напишите номер варианта в комментариях.'},
+rebus:{topic:'Разгадайте ребус',task:'Разгадайте ребус из трёх картинок.',call:'Ответ пишите в комментариях.'},
+crit:{topic:'Набор на пост агента поддержки',task:'[Кого ищем и какие условия]',call:'Подробности и заявки — [где подавать].'},
+hist:{topic:'История сервера',task:'[Короткий рассказ по фото]',call:'Помните этот момент? Пишите в комментариях.'},
+pet:{topic:'Питомец администратора',task:'[Кто хозяин и как зовут питомца]',call:'Оцените питомца в комментариях.'},
+news:{topic:'Новости админ-состава',task:'[Что изменилось в админ-составе]',call:'Поздравляем! Пишите отзывы в комментариях.'}
+};
+function rd(){var d;try{d=JSON.parse(localStorage.getItem(STORE))}catch(e){}d=d||{};d.posts=d.posts||[];d.projects=d.projects||[];d.ideas=d.ideas||[];d.presets=d.presets||{};return d}
+function wr(d){try{localStorage.setItem(STORE,JSON.stringify(d));return true}catch(e){return false}}
+function el(t,a,k){var n=document.createElement(t);Object.keys(a||{}).forEach(function(x){if(x==='text')n.textContent=a[x];else n.setAttribute(x,a[x])});(k||[]).forEach(function(c){if(c)n.appendChild(typeof c==='string'?document.createTextNode(c):c)});return n}
+function btn(l,f,c){var b=el('button',{type:'button','class':'b '+(c==null?'g':c),text:l});b.addEventListener('click',f);return b}
+function cp(t,done){function lg(){var a=el('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();var r=false;try{r=document.execCommand('copy')}catch(e){}a.remove();done(r?'Скопировано.':'Не удалось скопировать: выделите текст вручную.')}
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){done('Скопировано.')},lg);else lg()}
+function fld(label,val,tag,ph){var i=el(tag||'input',tag?{}:{type:'text'});if(ph)i.placeholder=ph;if(val)i.value=val;return{i:i,w:el('div',{},[el('label',{text:label}),i])}}
+function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function nick(){var p=rd().presets;if(p.nick)return p.nick;try{return localStorage.getItem('br-name')||''}catch(e){return ''}}
+function links(){return LINKS.map(function(l){return l[2]+' '+l[0]+' - '+l[1]}).join('\n')}
+
+function build(o){var a=['💜 Доброго времени суток, уважаемые игроки сервера Surgut!','🎙️ На связи: редактор группы - '+(o.nick||'Твой_Ник')+'.','','🔎 Тема сегодняшнего поста: «'+(o.topic||'[тема]')+'»','',o.task||'[Задание: 1–3 предложения]','','💬 '+(o.call||'Свои ответы оставляйте в комментариях!'),''];
+  if(o.prize)a.push('🏆 Приз: '+o.prize,'✍️ Форма ответа:\n'+(o.form||FORM),'');
+  a.push('💜 Желаю удачи и приятной игры на сервере Surgut!','',links());return a.join('\n')}
+
+function check(T){T=T||'';var r=[];function ok(c,g,b){r.push({ok:!!c,t:c?g:b})}
+  ok(/доброго времени суток/i.test(T),'Есть приветствие','Нет приветствия «Доброго времени суток, уважаемые игроки сервера Surgut!»');
+  ok(/на связи/i.test(T),'Есть строка «На связи»','Нет строки «На связи: редактор группы - Ник»');
+  ok(/комментар/i.test(T),'Есть призыв отвечать в комментариях','Нет призыва оставить ответ в комментариях');
+  var tail=T.trim().split('\n').slice(-6).join('\n');
+  LINKS.forEach(function(l){var has=T.indexOf(l[1])>=0;ok(has&&tail.indexOf(l[1])>=0,'Ссылка: '+l[0]+' (в конце)',has?'Ссылка «'+l[0]+'» должна стоять в конце поста':'Нет ссылки «'+l[0]+'» ('+l[1]+')')});
+  var ph=T.match(/\[[^\]\n]+\]|Твой_Ник/g);ok(!ph,'Незаполненных полей нет','Остались незаполненные поля: '+(ph||[]).slice(0,3).join(', '));
+  var ty=[];TYPO.forEach(function(x){if(x[0].test(T))ty.push(x[1])});ok(!ty.length,'Опечаток не найдено','Возможные опечатки: '+ty.join('; '));
+  var pr=/приз(?!ыв)|игровой валют|\d[\d.\s]*ив(?![а-яё])/i.test(T),fm=/банковск/i.test(T);
+  if(pr)ok(fm,'Для приза есть форма ответа. Сумму согласуй с Риной или ЗГРГ','Есть приз, но нет формы ответа (Nick_Name, ответ, банковский счёт)');
+  else if(fm)ok(false,'','Форма со счётом нужна только если есть приз');
+  ok(T.length<=1500,'Длина: '+T.length+' знаков','Длинный пост ('+T.length+' знаков): сократи задание');
+  return r}
+window.RGcheck=check;
+function showCheck(box,T){box.replaceChildren();var r=check(T),bad=r.filter(function(x){return !x.ok}).length;
+  box.appendChild(el('p',{'class':'rg-muted',text:bad?'Найдено замечаний: '+bad:'Всё в порядке, можно отправлять.'}));
+  r.forEach(function(x){box.appendChild(el('div',{'class':'rg-check',text:(x.ok?'✅ ':'⚠️ ')+x.t}))})}
+
+function postView(v){
+  v.append(el('h2',{text:'Конструктор поста'}),el('p',{'class':'rg-muted',text:'Заполни поля, проверь пост и скопируй. Текст пиши своими словами: плагиат не засчитывается.'}));
+  var n=fld('Твой ник',nick(),0,'Имя_Фамилия'),t=fld('Тема поста'),k=fld('Задание для игроков','','textarea'),c=fld('Призыв (куда отвечать)','','input','Свои ответы оставляйте в комментариях!'),pc=el('input',{type:'checkbox'}),pz=fld('Приз'),
+    out=el('textarea',{rows:'12'}),res=el('div'),msg=el('div',{'class':'msg',role:'status'});
+  pz.i.placeholder='Например: 100.000 игровой валюты (согласуй заранее)';
+  function gen(){out.value=build({nick:n.i.value.trim(),topic:t.i.value.trim(),task:k.i.value.trim(),call:c.i.value.trim(),prize:pc.checked?(pz.i.value.trim()||PRIZE):''});res.replaceChildren()}
+  v.append(n.w,t.w,k.w,c.w,el('label',{'class':'rg-check'},[pc,'В посте есть приз']),pz.w,
+    el('div',{'class':'rg-actions'},[btn('Собрать текст',gen,''),btn('Скопировать',function(){cp(out.value,function(m){msg.textContent=m})}),btn('Проверить',function(){showCheck(res,out.value)}),
+      btn('Сохранить в проекты',function(){var d=rd(),p={id:Date.now(),title:t.i.value.trim()||'Новый пост',text:out.value,type:'Пост',date:today()};d.projects.push(p);msg.textContent=wr(d)?'Сохранено в «Мои проекты».':'Браузер запретил сохранение.'})]),
+    out,msg,res);
+  gen()}
+
+function checkView(v){
+  v.append(el('h2',{text:'Проверка поста перед отправкой'}),el('p',{'class':'rg-muted',text:'Вставь готовый текст из «Предложить пост».'}));
+  var ta=el('textarea',{rows:'10',placeholder:'Вставьте текст поста'}),res=el('div');
+  v.append(ta,el('div',{'class':'rg-actions'},[btn('Проверить',function(){showCheck(res,ta.value)},'')]),res)}
+
+function presetsView(v){var p=rd().presets;
+  v.append(el('h2',{text:'Мои пресеты'}),el('p',{'class':'rg-muted',text:'Ник, шрифт и цвета запоминаются и подставляются в посты и в Конструктор афиш.'}));
+  var n=fld('Ник',p.nick||nick(),0,'Имя_Фамилия'),fs=el('select',{},FONTS.map(function(f){return el('option',{value:f,text:f})})),c1=el('input',{type:'color',value:p.c1||'#8a1de8'}),c2=el('input',{type:'color',value:p.c2||'#4a1b9c'}),msg=el('div',{'class':'msg',role:'status'});
+  fs.value=p.font||'Onest';
+  function collect(){var d=rd();d.presets={nick:n.i.value.trim(),font:fs.value,c1:c1.value,c2:c2.value};return d}
+  v.append(n.w,el('label',{text:'Любимый шрифт'}),fs,el('label',{text:'Цвет фона 1'}),c1,el('label',{text:'Цвет фона 2'}),c2,
+    el('div',{'class':'rg-actions'},[btn('Сохранить пресет',function(){var d=collect();try{localStorage.setItem('br-name',d.presets.nick)}catch(e){}msg.textContent=wr(d)?'Пресет сохранён.':'Браузер запретил сохранение.'},''),
+      btn('Применить к Конструктору афиш',function(){if(!confirm('Фон и шрифт всех текстов в Конструкторе будут заменены. Продолжить?'))return;
+        var d=collect();wr(d);try{var s=JSON.parse(localStorage.getItem('br-constructor-1')||'null')||{w:1920,h:1080,bg:{t:'grad',c1:'',c2:'',ang:135},els:[]};
+          s.bg=s.bg||{};if(s.bg.t!=='img')s.bg.t='grad';s.bg.c1=d.presets.c1;s.bg.c2=d.presets.c2;if(s.bg.ang==null)s.bg.ang=135;
+          s.els.forEach(function(e){if(e.type==='text')e.font=d.presets.font});localStorage.setItem('br-constructor-1',JSON.stringify(s));msg.textContent='Применено. Откройте Конструктор: цвета и шрифт уже там.'}catch(e){msg.textContent='Не удалось применить: браузер запретил хранилище.'}})]),msg)}
+
+function backupView(v){
+  v.append(el('h2',{text:'Резервная копия'}),el('p',{'class':'rg-muted',text:'Данные хранятся только в этом браузере. Сохраняй файл копии, чтобы не потерять их при очистке. Загруженные фото в копию не входят.'}));
+  var msg=el('div',{'class':'msg',role:'status'}),fi=el('input',{type:'file',accept:'application/json,.json'});
+  v.append(el('div',{'class':'rg-actions'},[btn('Скачать копию (JSON)',function(){var ls={};KEYS.forEach(function(k){try{var x=localStorage.getItem(k);if(x!=null)ls[k]=x}catch(e){}});
+    var b=new Blob([JSON.stringify({v:1,rg:rd(),ls:ls})],{type:'application/json'}),u=URL.createObjectURL(b),a=el('a',{href:u,download:'rg-backup-'+today()+'.json'});document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);msg.textContent='Копия скачана.'},'')]),
+    el('label',{text:'Восстановить из копии'}),fi,msg);
+  fi.addEventListener('change',function(){var f=fi.files&&fi.files[0];if(!f)return;var r=new FileReader();
+    r.onload=function(){try{var p=JSON.parse(r.result);if(!p||!p.rg||!Array.isArray(p.rg.posts))throw 0;
+      if(!confirm('Текущие данные будут заменены данными из копии. Продолжить?'))return;
+      wr(p.rg);Object.keys(p.ls||{}).forEach(function(k){if(KEYS.indexOf(k)>=0&&typeof p.ls[k]==='string')try{localStorage.setItem(k,p.ls[k])}catch(e){}});
+      msg.textContent='Восстановлено. Страница перезагрузится.';setTimeout(function(){location.reload()},900)}catch(e){msg.textContent='Это не файл копии RG Studio.'}};
+    r.onerror=function(){msg.textContent='Не удалось прочитать файл.'};r.readAsText(f)})}
+
+var TABS=[['post','Конструктор поста',postView],['check','Проверка поста',checkView],['presets','Пресеты',presetsView],['backup','Резервная копия',backupView]];
+function inject(){var tabs=document.querySelector('#rg-studio .rg-tabs'),view=document.querySelector('#rg-studio .rg-view');if(!tabs||!view||tabs.querySelector('[data-x]'))return;
+  TABS.forEach(function(x){var b=btn(x[1],function(){tabs.querySelectorAll('button').forEach(function(q){q.classList.toggle('active',q===b)});view.replaceChildren();x[2](view)});b.dataset.tab=x[0];b.dataset.x='1';b.setAttribute('role','tab');tabs.appendChild(b)})}
+
+function linkBox(){var app=document.getElementById('app'),id=location.hash.slice(1),T=TPL[id];if(!T||!app||document.getElementById('rg-linkbox'))return;var dock=app.querySelector('.dock');if(!dock)return;
+  var n=el('input',{type:'text',placeholder:'Твой ник',value:nick(),'aria-label':'Ник для поста'}),out=el('textarea',{rows:'12','aria-label':'Текст поста'}),res=el('div'),msg=el('div',{'class':'msg',role:'status'});
+  function gen(){out.value=build({nick:n.value.trim(),topic:T.topic,task:T.task,call:T.call,prize:T.prize?PRIZE:'',form:T.form});res.replaceChildren()}
+  var box=el('div',{'class':'panel',id:'rg-linkbox'},[el('h2',{text:'Текст поста к этому шаблону'}),el('p',{text:'Каркас по схеме группы. Замени всё в [скобках] и перепиши своими словами: плагиат не засчитывается.'}),n,
+    el('div',{'class':'row'},[btn('Обновить текст',gen,''),btn('Скопировать',function(){cp(out.value,function(m){msg.textContent=m})}),btn('Проверить',function(){showCheck(res,out.value)}),
+      btn('В проекты',function(){var d=rd();d.projects.push({id:Date.now(),title:T.topic,text:out.value,type:'Пост',date:today()});msg.textContent=wr(d)?'Сохранено в «Мои проекты».':'Браузер запретил сохранение.'})]),out,msg,res]);
+  app.insertBefore(box,dock);gen()}
+
+function tick(){inject();linkBox()}
+var app=document.getElementById('app');if(app)new MutationObserver(tick).observe(app,{childList:true,subtree:true});
+window.addEventListener('hashchange',function(){setTimeout(tick,50)});tick();
 })();
 </script>
 
