@@ -1204,5 +1204,255 @@ function patch(){var w=document.querySelector('.tutwrap');if(!w||w.getAttribute(
 patch();new MutationObserver(patch).observe(document.getElementById('app'),{childList:true,subtree:true});
 })();
 </script>
+
+<script>
+/* ===== RG STUDIO 2.0: рабочее пространство редактора ===== */
+(function(){
+'use strict';
+var STORE='rg-studio-v2';
+function read(){
+  try{return JSON.parse(localStorage.getItem(STORE))||{posts:[],projects:[],ideas:[],stats:{}}}
+  catch(e){return {posts:[],projects:[],ideas:[],stats:{}}}
+}
+var db=read();
+function save(){try{localStorage.setItem(STORE,JSON.stringify(db));return true}catch(e){return false}}
+function el(tag,attrs,children){
+  var n=document.createElement(tag);
+  Object.keys(attrs||{}).forEach(function(k){
+    if(k==='text')n.textContent=attrs[k];else if(k==='html')n.innerHTML=attrs[k];else n.setAttribute(k,attrs[k]);
+  });
+  (children||[]).forEach(function(c){if(c)n.appendChild(typeof c==='string'?document.createTextNode(c):c)});
+  return n;
+}
+function btn(label,fn,cls){var b=el('button',{type:'button',class:'b '+(cls||'g'),text:label});b.addEventListener('click',fn);return b}
+function field(label,placeholder,value,tag){
+  var w=el('div',{}),l=el('label',{text:label}),i=el(tag||'input',{type:'text',placeholder:placeholder||''});
+  if(value)i.value=value;w.append(l,i);return {wrap:w,input:i};
+}
+function note(parent,text){var n=el('div',{class:'msg',role:'status',text:text});parent.append(n);return n}
+function copy(text,done){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){done('Скопировано в буфер обмена.')},function(){fallback()})}
+  else fallback();
+  function fallback(){var t=el('textarea',{});t.value=text;t.style.position='fixed';t.style.opacity='0';document.body.append(t);t.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}t.remove();done(ok?'Скопировано в буфер обмена.':'Не удалось скопировать. Выдели текст вручную.')}
+}
+function dateNow(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var style=el('style',{text:`
+#rg-studio{margin:18px 0 20px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:0 12px 35px rgba(0,0,0,.12)}
+#rg-studio .rg-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+#rg-studio .rg-brand{font:800 22px Oswald,sans-serif;letter-spacing:.04em}
+#rg-studio .rg-sub{font-size:13px;color:var(--muted);margin:3px 0 0}
+#rg-studio .rg-tabs{display:flex;flex-direction:column;gap:7px;overflow:visible;padding:12px 0 8px}
+#rg-studio .rg-tabs button{width:100%;white-space:normal;text-align:left;min-height:42px;padding:9px 12px}
+#rg-studio .rg-tabs button.active{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+#rg-studio .rg-view{padding-top:8px}
+#rg-studio .rg-cards{display:grid;grid-template-columns:1fr;gap:10px}
+#rg-studio .rg-tile{border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--bg);text-align:left;min-width:0}
+#rg-studio .rg-tile b{display:block;font:700 16px Oswald,sans-serif;margin:4px 0}
+#rg-studio .rg-tile small{color:var(--muted);line-height:1.4}
+#rg-studio .rg-kpi{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0}
+#rg-studio .rg-kpi>div{padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+#rg-studio .rg-kpi strong{display:block;font:700 22px Oswald,sans-serif}
+#rg-studio .rg-kpi small{color:var(--muted);font-size:11px}
+#rg-studio input,#rg-studio textarea,#rg-studio select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:10px 12px;min-height:42px}
+#rg-studio textarea{min-height:100px;resize:vertical}
+#rg-studio label{font-size:13px;margin:11px 0 5px}
+#rg-studio .rg-entry{border:1px solid var(--line);border-radius:11px;padding:11px;margin:9px 0;background:var(--bg)}
+#rg-studio .rg-entry-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+#rg-studio .rg-entry p{font-size:13px;white-space:pre-wrap;margin:7px 0}
+#rg-studio .rg-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+#rg-studio .rg-actions .b{min-height:36px;padding:6px 10px;font-size:13px}
+#rg-studio .rg-muted{color:var(--muted);font-size:13px}
+#rg-studio .rg-sep{height:1px;background:var(--line);margin:14px 0}
+#rg-studio .rg-check{display:flex;gap:8px;align-items:center;margin:10px 0}
+#rg-studio .rg-check input{width:auto;min-height:0}
+@media(max-width:520px){#rg-studio{padding:12px}#rg-studio .rg-cards,#rg-studio .rg-kpi{grid-template-columns:1fr}#rg-studio .rg-kpi strong{font-size:19px}}
+`});
+document.head.appendChild(style);
+function mount(){
+ var app=document.getElementById('app'),ticker=app&&app.querySelector('.ticker');
+ if(!ticker||app.querySelector('#rg-studio'))return;
+ var root=el('section',{id:'rg-studio','aria-label':'Рабочее пространство RG Studio'});
+ var head=el('div',{class:'rg-head'},[
+   el('div',{},[el('div',{class:'rg-brand',text:'RG STUDIO 2.0'}),el('p',{class:'rg-sub',text:'Рабочее пространство редактора • BLACK RUSSIA | SURGUT'})]),
+   el('span',{class:'tag',text:'EDITOR WORKSPACE'})
+ ]);
+ var tabs=el('div',{class:'rg-tabs',role:'tablist'}),view=el('div',{class:'rg-view'});
+ var names=[['home','Обзор'],['prompt','AI-помощник'],['calendar','Контент-план'],['projects','Мои проекты'],['ideas','Банк идей']];
+ var active='home';
+ function show(name){
+   active=name;tabs.querySelectorAll('button').forEach(function(b){b.classList.toggle('active',b.dataset.tab===name)});
+   view.replaceChildren();
+   if(name==='home')homeView();
+   if(name==='prompt')promptView();
+   if(name==='calendar')calendarView();
+   if(name==='projects')projectsView();
+   if(name==='ideas')ideasView();
+ }
+ names.forEach(function(x){var b=btn(x[1],function(){show(x[0])});b.dataset.tab=x[0];b.setAttribute('role','tab');tabs.append(b)});
+ root.append(head,tabs,view);
+ ticker.parentNode.insertBefore(root,ticker.nextSibling);
+ show('home');
+
+ function homeView(){
+   var totalPosts=db.posts.length,totalProjects=db.projects.length,totalIdeas=db.ideas.length;
+   var k=el('div',{class:'rg-kpi'},[
+     el('div',{},[el('strong',{text:String(totalPosts)}),el('small',{text:'Черновиков постов'})]),
+     el('div',{},[el('strong',{text:String(totalProjects)}),el('small',{text:'Сохранённых проектов'})]),
+     el('div',{},[el('strong',{text:String(totalIdeas)}),el('small',{text:'Личных идей'})])
+   ]);
+   var cards=el('div',{class:'rg-cards'});
+   [['prompt','✦','AI-помощник','Сформируй точный запрос для нейросети.'],['calendar','▦','Контент-план','Планируй даты и статусы публикаций.'],['projects','▤','Мои проекты','Сохраняй тексты и возвращайся к ним позже.'],['ideas','◇','Банк идей','Собирай собственные темы и заготовки.'],['templates','▧','Шаблоны афиш','Перейти к существующей библиотеке шаблонов.']].forEach(function(x){
+     var c=el('button',{type:'button',class:'rg-tile'},[el('div',{text:x[1]}),el('b',{text:x[2]}),el('small',{text:x[3]})]);
+     c.addEventListener('click',function(){if(x[0]==='templates'){var target=document.querySelector('.hud h2');if(target)target.scrollIntoView({behavior:'smooth'});return}show(x[0])});cards.append(c);
+   });
+   view.append(k,el('h3',{text:'Быстрый запуск'}),cards,el('div',{class:'rg-sep'}),el('p',{class:'rg-muted',text:'Существующий конструктор афиш, библиотека шаблонов, обучение редакции и правила постинга остаются ниже на странице.'}));
+ }
+ function postView(){
+   view.append(el('h2',{text:'Конструктор публикации'}),el('p',{class:'rg-muted',text:'Собери текст поста. Каркас можно скопировать или сохранить в проектах.'}));
+   var who=field('Редактор','Suzo_Grant','Suzo_Grant'),topic=field('Тема публикации','Например: угадай автомобиль'),body=field('Основной текст','Опиши тему, задание или новость','', 'textarea'),cta=field('Призыв к действию','Например: Напиши ответ в комментариях'),prize=field('Приз (если есть)','Например: 100 000 игровой валюты');
+   var has=el('input',{type:'checkbox'}),hasWrap=el('label',{class:'rg-check'},[has,document.createTextNode('Это публикация с призом')]);
+   [who,topic,body,cta,prize].forEach(function(x){view.append(x.wrap)});
+   view.append(hasWrap);
+   var output=el('textarea',{readonly:'readonly',placeholder:'Здесь появится готовый текст поста'});output.style.marginTop='10px';
+   function generate(){
+     var arr=['Доброго времени суток, уважаемые игроки сервера SURGUT!','На связи: редактор группы — '+(who.input.value.trim()||'Suzo_Grant')+'.','',topic.input.value.trim()||'[Тема публикации]','',body.input.value.trim()||'[Основной текст публикации]',''];
+     if(has.checked)arr.push('🏆 Приз: '+(prize.input.value.trim()||'[Укажите согласованный приз]'),'');
+     if(cta.input.value.trim())arr.push(cta.input.value.trim(),'');
+     arr.push('Благодарим за внимание. Приятной игры на SURGUT!','','🔔 Беседа игроков — vk.cc/clkU4b','🔊 Discord — vk.cc/d0cVZZ','💤 Форум — vk.cc/clkTwG');
+     output.value=arr.join('\\n');
+   }
+   var status=el('div',{class:'msg',role:'status'});
+   view.append(btn('Сформировать пост',generate,''),output,el('div',{class:'rg-actions'},[
+     btn('Скопировать текст',function(){if(!output.value)generate();copy(output.value,function(t){status.textContent=t})}),
+     btn('Сохранить в проекты',function(){if(!output.value)generate();var p={id:Date.now(),title:topic.input.value.trim()||'Новый пост',text:output.value,type:'Пост',date:dateNow()};db.projects.push(p);db.posts.push(p);save();status.textContent='Черновик сохранён в «Мои проекты».'})
+   ]),status);
+   generate();
+ }
+ function promptView(){
+   view.append(el('h2',{text:'AI-помощник редактора'}),el('p',{class:'rg-muted',text:'Готовит промпты для внешних нейросетей. Генерация изображения или текста происходит в выбранном тобой AI-сервисе, не внутри этого сайта.'}));
+   var type=el('select',{},[el('option',{value:'image',text:'Промпт для изображения'}),el('option',{value:'video',text:'Промпт для видео'}),el('option',{value:'text',text:'Запрос для написания поста'})]);
+   var subject=field('Тема / главный объект','Например: BMW M5 F90 на ночной улице'),styleF=field('Стиль и атмосфера','Например: кинематографично, реалистично, фиолетовый неон'),format=field('Формат','Например: вертикальный 4:5'),avoid=field('Что исключить','Например: водяные знаки, лишние надписи, логотипы');
+   view.append(el('label',{text:'Тип запроса'}),type,subject.wrap,styleF.wrap,format.wrap,avoid.wrap);
+   var out=el('textarea',{readonly:'readonly',placeholder:'Готовый промпт появится здесь'}),status=el('div',{class:'msg',role:'status'});
+   var go=btn('Собрать промпт',function(){
+     var s=subject.input.value.trim()||'публикация для BLACK RUSSIA | SURGUT',st=styleF.input.value.trim()||'профессиональный, выразительный, чистая композиция',fm=format.input.value.trim()||'4:5',av=avoid.input.value.trim()||'искажённый текст, водяные знаки, лишние логотипы';
+     var t=type.value==='image'?'Создай изображение для сообщества BLACK RUSSIA | SURGUT. Главный объект: '+s+'. Стиль и атмосфера: '+st+'. Формат: '+fm+'. Композиция должна быть читаемой на экране телефона. Оставь свободную область под заголовок. Исключить: '+av+'.':
+       type.value==='video'?'Create a cinematic video for BLACK RUSSIA | SURGUT. Main subject: '+s+'. Visual style: '+st+'. Aspect ratio: '+fm+'. Use smooth camera movement, coherent motion, realistic lighting and clear subject focus. Avoid: '+av+'.':
+       'Напиши оригинальный пост для сообщества BLACK RUSSIA | SURGUT на тему: '+s+'. Тон: '+st+'. Формат публикации: '+fm+'. Структура: приветствие, подпись «На связи: редактор группы — Suzo_Grant», основная часть, понятный призыв к действию, завершение. Не выдумывай игровые факты, даты, награды и условия. Исключить: '+av+'.';
+     out.value=t;status.textContent='Промпт готов. Скопируй его и используй во внешнем AI-сервисе.';
+   });
+   view.append(go,out,el('div',{class:'rg-actions'},[btn('Скопировать промпт',function(){if(!out.value)go.click();copy(out.value,function(t){status.textContent=t})})]),status);
+ }
+ function calendarView(){
+   view.append(el('h2',{text:'Контент-план'}),el('p',{class:'rg-muted',text:'Локальный план публикаций. Записи сохраняются в этом браузере на устройстве.'}));
+   var title=field('Название публикации','Например: викторина про автомобили'),date=el('input',{type:'date',value:dateNow()}),status=el('select',{},[['idea','Идея'],['draft','Черновик'],['ready','Готово'],['published','Опубликовано']].map(function(x){return el('option',{value:x[0],text:x[1]})}));
+   view.append(title.wrap,el('label',{text:'Дата публикации'}),date,el('label',{text:'Статус'}),status);
+   var list=el('div',{}),msg=el('div',{class:'msg',role:'status'});
+   view.append(btn('Добавить в план',function(){if(!title.input.value.trim()){msg.textContent='Укажи название публикации.';return}db.posts.push({id:Date.now(),title:title.input.value.trim(),date:date.value||dateNow(),status:status.value,text:'',type:'План'});save();title.input.value='';draw();msg.textContent='Запись добавлена.'}),msg,list);
+   function draw(){list.replaceChildren();var a=db.posts.slice().sort(function(x,y){return String(x.date||'').localeCompare(String(y.date||''))});if(!a.length){list.append(el('p',{class:'rg-muted',text:'Пока нет запланированных публикаций.'}));return}a.forEach(function(p){var labels={idea:'Идея',draft:'Черновик',ready:'Готово',published:'Опубликовано'};var e=el('div',{class:'rg-entry'},[el('div',{class:'rg-entry-head'},[el('b',{text:p.title}),el('small',{text:p.date||'Без даты'})]),el('p',{text:labels[p.status]||p.type||'Запись'})]);e.append(el('div',{class:'rg-actions'},[btn('Удалить',function(){db.posts=db.posts.filter(function(x){return x.id!==p.id});save();draw()})]));list.append(e)})}
+   draw();
+ }
+ function projectsView(){
+   view.append(el('h2',{text:'Мои проекты'}),el('p',{class:'rg-muted',text:'Здесь хранятся сохранённые черновики и тексты. Данные доступны в этом браузере.'}));
+   var list=el('div',{});view.append(list);
+   function draw(){list.replaceChildren();if(!db.projects.length){list.append(el('p',{class:'rg-muted',text:'Сохранённых проектов пока нет. Добавь материалы через AI-помощник или создай собственную заготовку.'}));return}
+     db.projects.slice().reverse().forEach(function(p){entry(list,p.title,p.text,p.type,p.id)})}
+   draw();
+ }
+ function entry(parent,title,textValue,type,id){
+   var e=el('div',{class:'rg-entry'},[el('div',{class:'rg-entry-head'},[el('b',{text:title}),el('small',{text:type||'Проект'})]),el('p',{text:textValue||'Нет текста'})]);
+   e.append(el('div',{class:'rg-actions'},[
+     btn('Скопировать',function(){copy(textValue||'',function(t){e.querySelector('p').textContent=t})}),
+     btn('Удалить',function(){db.projects=db.projects.filter(function(x){return x.id!==id});db.posts=db.posts.filter(function(x){return x.id!==id});save();e.remove()})
+   ]));parent.append(e);
+ }
+ function ideasView(){
+   view.append(el('h2',{text:'Личный банк идей'}),el('p',{class:'rg-muted',text:'Сохраняй собственные задумки для будущих публикаций.'}));
+   var f=field('Новая идея','Например: найди пять отличий на скриншоте'),list=el('div',{}),msg=el('div',{class:'msg',role:'status'});
+   view.append(f.wrap,btn('Добавить идею',function(){var v=f.input.value.trim();if(!v){msg.textContent='Сначала введи идею.';return}db.ideas.push({id:Date.now(),text:v});save();f.input.value='';draw();msg.textContent='Идея сохранена.'}),msg,list);
+   function draw(){list.replaceChildren();if(!db.ideas.length){list.append(el('p',{class:'rg-muted',text:'Личный банк пока пуст.'}));return}db.ideas.slice().reverse().forEach(function(x){var e=el('div',{class:'rg-entry'},[el('p',{text:x.text})]);e.append(btn('Удалить',function(){db.ideas=db.ideas.filter(function(z){return z.id!==x.id});save();draw()}));list.append(e)})}
+   draw();
+ }
+}
+var observer=new MutationObserver(function(){mount()});
+function start(){mount();var app=document.getElementById('app');if(app)observer.observe(app,{childList:true,subtree:true})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+
+<style id="rg-multipage-style">
+#rg-site-shell{max-width:1180px;margin:0 auto;padding:0 12px}
+#rg-site-nav{position:relative;z-index:5;display:flex;flex-direction:column;gap:7px;overflow:visible;padding:10px;margin:0 0 16px;background:var(--bg);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.16);scrollbar-width:thin}
+#rg-site-nav button{width:100%;min-height:44px;padding:9px 14px;white-space:normal;text-align:left}
+#rg-site-nav button.active{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.rg-site-page{min-height:55vh;animation:rgPageIn .18s ease;display:flex;flex-direction:column;align-items:stretch;gap:12px}.rg-site-page>*{width:100%;max-width:100%;box-sizing:border-box}.rg-site-page .grid,.rg-site-page .cards,.rg-site-page #template-grid{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}.rg-site-page .row{display:flex;flex-direction:column;align-items:stretch}.rg-site-page img{max-width:100%;height:auto}
+.rg-site-page[hidden]{display:none!important}
+.rg-page-heading{margin:4px 0 14px;padding:4px 2px 12px;border-bottom:1px solid var(--line)}
+.rg-page-heading h2{margin:0 0 4px;font:700 24px Oswald,sans-serif}
+.rg-page-heading p{margin:0;color:var(--muted);font-size:13px}
+@keyframes rgPageIn{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(max-width:600px){#rg-site-shell{padding:0 8px}#rg-site-nav{margin:0 -2px 12px;border-radius:10px;padding:7px}#rg-site-nav button{min-height:42px;padding:8px 11px;font-size:13px}.rg-page-heading h2{font-size:21px}}
+</style>
+<script>
+(function(){
+'use strict';
+function setupPages(){
+ var app=document.getElementById('app');
+ if(!app||app.dataset.multiPageReady==='1')return false;
+ var studio=app.querySelector('#rg-studio'),academyNav=app.querySelector('#academy-nav'),modules=app.querySelector('#academy-modules'),ticker=app.querySelector('.ticker');
+ if(!studio||!academyNav||!modules||!ticker)return false;
+ var direct=Array.from(app.children);
+ var intro=direct.find(function(n){return n.classList&&n.classList.contains('hud')&&!n.querySelector('#faq-h')&&!n.querySelector('#academy-nav')&&n.querySelector('h1')});
+ var templateHud=direct.find(function(n){return n.classList&&n.classList.contains('hud')&&n.querySelector('#template-grid, .grid, .cards')&&n.querySelector('h2')&&n.textContent.indexOf('Шаблоны')!==-1});
+ if(!templateHud)templateHud=direct.filter(function(n){return n.classList&&n.classList.contains('hud')&&n.querySelector('h2')}).find(function(n){return n.textContent.indexOf('Шаблоны')!==-1});
+ var faq=app.querySelector('#faq-h');faq=faq?faq.closest('section'):null;
+ var rules=app.querySelector('#rules'),about=app.querySelector('#about'),footer=app.querySelector('footer');
+ var tut=app.querySelector('.tutwrap'),steps=app.querySelector('.steps'),promo=app.querySelector('.promo'),suggest=app.querySelector('#suggest'),example=app.querySelector('.example');
+ var cont=direct.find(function(n){return n.tagName==='BUTTON'&&n.textContent.indexOf('Продолжить:')===0});
+ var tapes=direct.filter(function(n){return n.classList&&n.classList.contains('tape')});
+ var separators=direct.filter(function(n){return n.classList&&n.classList.contains('sep')});
+ var shell=document.createElement('div');shell.id='rg-site-shell';
+ var nav=document.createElement('nav');nav.id='rg-site-nav';nav.setAttribute('aria-label','Разделы сайта');
+ var defs=[
+  ['home','Главная','Главная страница редакции и краткая информация.'],
+  ['workspace','Рабочая панель','AI-помощник, контент-план и личные материалы.'],
+  ['afisha','Афиши и шаблоны','Конструктор, готовые шаблоны и примеры оформления.'],
+  ['academy','Обучение редакции','Информация о редакции, учебные материалы и библиотека.'],
+  ['info','Информация','Предложение шаблонов, правила, ответы на вопросы и контакты.']
+ ];
+ var pages={};
+ defs.forEach(function(d){var page=document.createElement('section');page.className='rg-site-page';page.id='rg-page-'+d[0];page.hidden=true;var heading=document.createElement('div');heading.className='rg-page-heading';var h=document.createElement('h2');h.textContent=d[1];var p=document.createElement('p');p.textContent=d[2];heading.append(h,p);page.append(heading);pages[d[0]]=page;});
+ function move(node,page){if(node&&node!==nav&&node!==shell)pages[page].appendChild(node)}
+ // Main landing page
+ move(tapes[0],'home');move(intro,'home');move(ticker,'home');
+ // Separate workspace
+ move(studio,'workspace');
+ // Afisha tools and templates
+ move(cont,'afisha');move(tut,'afisha');move(steps,'afisha');move(templateHud,'afisha');move(promo,'afisha');move(example,'afisha');
+ // Learning content stays intact, but is shown on its own page
+ move(academyNav,'academy');move(modules,'academy');
+ // Reference and contact information
+ move(suggest,'info');move(faq,'info');move(rules,'info');move(about,'info');
+ // Footer and decorative tail
+ if(footer)move(footer,'info');if(tapes.length>1)move(tapes[tapes.length-1],'info');
+ // Keep any remaining separators with the afisha page, rather than leaving loose content below navigation.
+ direct.forEach(function(n){if(n.parentNode===app&&n!==nav&&n!==shell){if(n.classList&&n.classList.contains('tape'))return;move(n,'afisha')}});
+ defs.forEach(function(d){
+   var b=document.createElement('button');b.type='button';b.className='b g';b.textContent=d[1];b.dataset.page=d[0];b.setAttribute('aria-controls','rg-page-'+d[0]);b.addEventListener('click',function(){show(d[0],true)});nav.appendChild(b);
+ });
+ shell.appendChild(nav);defs.forEach(function(d){shell.appendChild(pages[d[0]])});
+ app.replaceChildren(shell);
+ function show(name,scroll){Object.keys(pages).forEach(function(k){pages[k].hidden=k!==name});nav.querySelectorAll('button').forEach(function(b){var on=b.dataset.page===name;b.classList.toggle('active',on);b.setAttribute('aria-current',on?'page':'false')});try{history.replaceState(null,'','#'+name)}catch(e){}if(scroll)window.scrollTo({top:0,behavior:'smooth'})}
+ nav.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowLeft'){var a=Array.from(nav.querySelectorAll('button')),i=a.indexOf(document.activeElement),n=(i+(e.key==='ArrowRight'?1:-1)+a.length)%a.length;a[n].focus();a[n].click();e.preventDefault()}});
+ app.dataset.multiPageReady='1';
+ var initial=(location.hash||'').replace('#','');show(pages[initial]?initial:'home',false);
+ return true;
+}
+function boot(){if(setupPages())return;var tries=0;var timer=setInterval(function(){tries++;if(setupPages()||tries>80)clearInterval(timer)},100)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+
 </body>
 </html>
